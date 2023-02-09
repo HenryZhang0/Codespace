@@ -1,0 +1,2 @@
+Token(ID, beq) Token(REG, $4) Token(COMMA, ,) Token(REG, $5) Token(COMMA, ,) Token(INT, 3) 
+4 5 4 
