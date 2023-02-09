@@ -1,7 +1,7 @@
 lis $1 ; input address
-.word 0xffff0004
+.word 0xffff
 lis $2 ; output address
-.word 0xffff000c
+.word 0xffff
 lis $7 ; eof constant
 .word -1
 lis $9 ; 1 constant

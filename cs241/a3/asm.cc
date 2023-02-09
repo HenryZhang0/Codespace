@@ -27,11 +27,13 @@ void output_word(int word) {
   }
 }
 
-char register_format(int s, int t, int d, int f) {
+int register_format(int s, int t, int d, int f) {
+  // cout << "register format: " << s << " " << t << " " << d << " " << f << endl;
   return s << 21 | t << 16 | d << 11 | f;
 }
 
-char immediate_format(int s, int t, char i, int f) {
+int immediate_format(char s, int t, char i, int f) {
+  // cout << "immediate format: " << s << " " << t << " " << i << " " << f << endl;
   return f << 26 | s << 21 | t << 16 | (i & 0xffff);
 }
 
@@ -105,7 +107,7 @@ int main() {
       string ins = line[0].getLexeme();
       if (ins == ".word") 
       {
-        if (line[1].getKind() == Token::Kind::LABEL) {
+        if (line[1].getKind() == Token::Kind::ID) {
           output_word(label_map[line[1].getLexeme() + ":"]);
         } else {
           output_word(string_to_binary(line[1].getLexeme()));
@@ -119,11 +121,11 @@ int main() {
           f = 32; // 10 000
         else if (ins == "sub")
           f = 24; // 1 1000
-        cout << line[1].getLexeme().substr(1) << endl;
+        
         int s = stoi(line[1].getLexeme().substr(1));
         int t = stoi(line[3].getLexeme().substr(1));
         int d = stoi(line[5].getLexeme().substr(1));
-        cout << s << " " << t << " " << d << " " << f << endl;
+
         int instruction = register_format(s, t, d, f);
         output_word(instruction);
       }
@@ -141,7 +143,7 @@ int main() {
           f = 27; // 1 1011
         int s = stoi(line[1].getLexeme().substr(1));
         int t = stoi(line[3].getLexeme().substr(1));
-        cout << s << " " << t << " " << f << endl;
+        
         int instruction = register_format(s, t, 0, f);
         output_word(instruction);
       }
@@ -157,7 +159,6 @@ int main() {
         int t = stoi(line[5].getLexeme().substr(1));
         char i = string_to_binary(line[3].getLexeme());
 
-        cout << s << " " << t << " " << f << " " << i << endl;
         output_word(immediate_format(s, t, i, f));
       }
       else if (ins == "beq" || ins == "bne" ) 
@@ -178,7 +179,6 @@ int main() {
           i = string_to_binary(line[5].getLexeme());
         }
 
-        cout << s << " " << t << " " << f << " " << i << endl;
         output_word(immediate_format(s, t, i, f));
       }
       
@@ -190,10 +190,22 @@ int main() {
         else if (ins == "jalr")
           f = 9;
         int s = stoi(line[1].getLexeme().substr(1));
-        cout << s << " " << f << endl;
         output_word(register_format(s, 0, 0, f));
       }
 
+      else if (ins == "mfhi" || ins == "mflo" || ins == "lis") 
+      {
+        int f;
+        if (ins == "mfhi") 
+          f = 16;
+        else if (ins == "mflo")
+          f = 18;
+        else if (ins == "lis")
+          f = 20;
+        int d = stoi(line[1].getLexeme().substr(1));
+        output_word(register_format(0, 0, d, f));
+      }
+      
       else
       {
         cout << "WHAT!?: Invalid instruction: " << ins << endl; 
