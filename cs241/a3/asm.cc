@@ -105,16 +105,10 @@ int main() {
       string ins = line[0].getLexeme();
       if (ins == ".word") 
       {
-        if (line[1].getKind() == Token::Kind::HEXINT) {
-          cout << "HEX" << endl;
-
-          unsigned int integer = stoi(line[1].getLexeme());
-          
-        } else if (line[1].getKind() == Token::Kind::INT) {
-          int integer = stoi(line[1].getLexeme());
-          output_word(integer);
-        } else {
+        if (line[1].getKind() == Token::Kind::LABEL) {
           output_word(label_map[line[1].getLexeme() + ":"]);
+        } else {
+          output_word(string_to_binary(line[1].getLexeme()));
         }
       }
       else if (ins == "add" || ins == "sub" || ins == "slt" || ins == "stlu")
@@ -135,11 +129,36 @@ int main() {
       }
       else if (ins == "mult" || ins == "div" || ins == "multu" || ins == "divu") 
       {
-
+        // 000000 sssss ttttt 00000 00000 ffffff
+        int f;
+        if (ins == "mult") 
+          f = 24; // 1 1000
+        else if (ins == "div")
+          f = 26; // 1 1010
+        else if (ins == "multu")
+          f = 25; // 1 1001
+        else if (ins == "divu")
+          f = 27; // 1 1011
+        int s = stoi(line[1].getLexeme().substr(1));
+        int t = stoi(line[3].getLexeme().substr(1));
+        cout << s << " " << t << " " << f << endl;
+        int instruction = register_format(s, t, 0, f);
+        output_word(instruction);
       }
       else if (ins == "lw" || ins == "sw") 
       {
+        // 100011 sssss ttttt iiiiiiiiiiiiiiii
+        int f;
+        if (ins == "lw") 
+          f = 35; // 100 011
+        else if (ins == "sw")
+          f = 43; // 101 011
+        int s = stoi(line[1].getLexeme().substr(1));
+        int t = stoi(line[5].getLexeme().substr(1));
+        char i = string_to_binary(line[3].getLexeme());
 
+        cout << s << " " << t << " " << f << " " << i << endl;
+        output_word(immediate_format(s, t, i, f));
       }
       else if (ins == "beq" || ins == "bne" ) 
       {
@@ -153,7 +172,7 @@ int main() {
         int t = stoi(line[3].getLexeme().substr(1));
 
         char i;
-        if (line[5].getKind() == Token::Kind::LABEL) {
+        if (line[5].getKind() == Token::Kind::ID) {
           i = label_map[line[5].getLexeme() + ":"];
         } else {
           i = string_to_binary(line[5].getLexeme());
@@ -162,10 +181,19 @@ int main() {
         cout << s << " " << t << " " << f << " " << i << endl;
         output_word(immediate_format(s, t, i, f));
       }
-      else if (ins == "jr" || ins == "jalr") {
-
-      }
       
+      else if (ins == "jr" || ins == "jalr") 
+      {
+        int f;
+        if (ins == "jr") 
+          f = 8;
+        else if (ins == "jalr")
+          f = 9;
+        int s = stoi(line[1].getLexeme().substr(1));
+        cout << s << " " << f << endl;
+        output_word(register_format(s, 0, 0, f));
+      }
+
       else
       {
         cout << "WHAT!?: Invalid instruction: " << ins << endl; 
