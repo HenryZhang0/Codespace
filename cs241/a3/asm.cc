@@ -166,9 +166,9 @@ int main() {
           f = 35; // 100 011
         else if (ins == "sw")
           f = 43; // 101 011
-        int64_t s = line[1].toNumber();
-        int64_t t = line[5].toNumber();
+        int64_t t = line[1].toNumber();
         int64_t i = line[3].toNumber();
+        int64_t s = line[5].toNumber();
 
         output_word(immediate_format(s, t, i, f));
       }
