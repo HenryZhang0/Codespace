@@ -60,8 +60,6 @@ int main() {
   vector<vector<Token>> buffer;
   int programCounter = 0;
 
-
-
   try {
     while (getline(std::cin, line)) {
       // This example code just prints the scanned tokens on each line.
@@ -92,19 +90,15 @@ int main() {
         }
       }
 
-        // line is only LABEL:    continue
-        if (tokenLineNoLabels.size() == 0) {
-          continue;    
-        } else {
-          buffer.push_back(tokenLineNoLabels); // add to buffer
-          programCounter++;
-        }
-      
+      if (tokenLineNoLabels.size() == 0) continue; // line is only LABEL:    continue
+            
       if (!validFormat(tokenLineNoLabels, tokenLineNoLabels[0].getLexeme())) {
         std::cerr << "Invalid format" << std::endl;
         throw 1;
       }
 
+      buffer.push_back(tokenLineNoLabels); // add to buffer
+      programCounter++;
     }
 
 // SECOND PASS ------------------------------------------------------------------------
@@ -114,8 +108,8 @@ int main() {
       string ins = line[0].getLexeme();
       if (ins == ".word") 
       {
-        if (line[1].getKind() == Token::Kind::ID) {
-          if (label_map.find(line[1].getLexeme() + ":") == label_map.end()) {
+        if (line[1].getKind() == Token::Kind::ID) { // LABEL
+          if (label_map.find(line[1].getLexeme() + ":") == label_map.end()) { // not found
             std::cerr << "Undefined label: " << line[1].getLexeme() << std::endl;
             throw 2;
           }
@@ -126,7 +120,6 @@ int main() {
       }
       else if (ins == "add" || ins == "sub" || ins == "slt" || ins == "sltu")
       {
-        // 000000 sssss ttttt ddddd 00000 ffffff
         int f;
         if (ins == "add") 
           f = 32; // 10 000
@@ -253,7 +246,7 @@ int main() {
       
       else
       {
-        cout << "WHAT!?: Invalid instruction: " << ins << endl; 
+        cout << "WHAT!? ERROR: Invalid instruction: " << ins << endl; 
       }
       
     }
