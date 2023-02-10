@@ -174,11 +174,11 @@ int main() {
         int64_t i;
         if (line[5].getKind() == Token::Kind::ID) {
           i = label_map[line[5].getLexeme() + ":"];
+          i = i - programCounter;
         } else {
           i = line[5].toNumber();
         }
 
-        i = i - programCounter;
 
         output_word(immediate_format(s, t, i, f));
       }
