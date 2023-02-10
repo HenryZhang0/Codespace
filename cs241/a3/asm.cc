@@ -15,7 +15,7 @@ void output_word(int64_t word) {
     std::cerr << "Number out of range: " << word << std::endl;
     throw 1;
   }
-  bool readable = 0;
+  bool readable = 1;
   if (readable) {
     for(int shift=24; shift>=0; shift-=8) {
       char c = (word >> shift) & 0xff;
@@ -50,7 +50,7 @@ int main() {
   // my variables
   unordered_map<string, int> label_map;
   vector<vector<Token>> buffer;
-  int programCounter = 0;
+  int programCounter = 1;
 
 
 
@@ -173,7 +173,8 @@ int main() {
 
         int64_t i;
         if (line[5].getKind() == Token::Kind::ID) {
-          i = label_map[line[5].getLexeme() + ":"];
+          i = label_map[line[5].getLexeme() + ":"]/4;
+          // cout << i << " " << programCounter << endl;
           i = i - programCounter;
         } else {
           i = line[5].toNumber();
