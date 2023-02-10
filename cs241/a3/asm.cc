@@ -50,7 +50,7 @@ int main() {
   // my variables
   unordered_map<string, int> label_map;
   vector<vector<Token>> buffer;
-  int programCounter = 1;
+  int programCounter = 0;
 
 
 
