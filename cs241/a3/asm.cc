@@ -100,7 +100,9 @@ int main() {
     }
 
 // SECOND PASS ------------------------------------------------------------------------
+    programCounter = 0;
     for (const vector<Token> &line : buffer) {
+      programCounter++;
       string ins = line[0].getLexeme();
       if (ins == ".word") 
       {
@@ -175,6 +177,8 @@ int main() {
         } else {
           i = line[5].toNumber();
         }
+
+        i = i - programCounter;
 
         output_word(immediate_format(s, t, i, f));
       }
