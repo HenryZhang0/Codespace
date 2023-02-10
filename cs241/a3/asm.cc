@@ -8,7 +8,7 @@
 using namespace std;
 
 void output_word(int word) {
-  bool readable = 1;
+  bool readable = 0;
   if (readable) {
     for(int shift=24; shift>=0; shift-=8) {
       char c = (word >> shift) & 0xff;
@@ -64,8 +64,8 @@ int main() {
 
       // for(int i=0; i<tokenLine.size(); i++) { ... }
       // PRINT 
-      for (auto &token : tokenLine) std::cout << token << ' ';
-      std::cout << std::endl;
+      // for (auto &token : tokenLine) std::cout << token << ' ';
+      // std::cout << std::endl;
 
 // FIRST PASS ------------------------------------------------------------------------
       // validate format and grab labels
