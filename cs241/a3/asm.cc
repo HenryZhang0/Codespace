@@ -170,6 +170,18 @@ int main() {
         int64_t i = line[3].toNumber();
         int64_t s = line[5].toNumber();
 
+        if (line[3].getKind() == Token::Kind::INT) {
+          if (i < -32768 || i > 32767) {
+            std::cerr << "Immediate out of range" << std::endl;
+            throw 1;
+          }
+        } else {
+          if (i < 0 || i > 65535) {
+            std::cerr << "Immediate out of range" << std::endl;
+            throw 1;
+          }
+        }
+
         output_word(immediate_format(s, t, i, f));
       }
       else if (ins == "beq" || ins == "bne" ) 
@@ -195,8 +207,18 @@ int main() {
           i = i - programCounter;
         } else {
           i = line[5].toNumber();
+          if (line[5].getKind() == Token::Kind::INT) {
+            if (i < -32768 || i > 32767) {
+              std::cerr << "Immediate out of range" << std::endl;
+              throw 1;
+            }
+          } else {
+            if (i < 0 || i > 65535) {
+              std::cerr << "Immediate out of range" << std::endl;
+              throw 1;
+            }
+          }
         }
-
 
         output_word(immediate_format(s, t, i, f));
       }

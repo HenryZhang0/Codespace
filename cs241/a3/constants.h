@@ -8,12 +8,12 @@ using namespace std;
 
 vector<Token> add = {{Token::Kind::ID, ""}, {Token::Kind::REG, ""}, {Token::Kind::COMMA, ""}, {Token::Kind::REG, ""}, {Token::Kind::COMMA, ""}, {Token::Kind::REG, ""}};
 vector<Token> mult {{Token::Kind::ID, ""}, {Token::Kind::REG, ""}, {Token::Kind::COMMA, ""}, {Token::Kind::REG, ""}};
-vector<Token> lw {{Token::Kind::ID,""}, {Token::Kind::REG,""}, {Token::Kind::COMMA,""}, {Token::Kind::INT,""}, {Token::Kind::LPAREN,""}, {Token::Kind::REG,""}, {Token::Kind::RPAREN,""}};
+// vector<Token> lw {{Token::Kind::ID,""}, {Token::Kind::REG,""}, {Token::Kind::COMMA,""}, {Token::Kind::INT,""}, {Token::Kind::LPAREN,""}, {Token::Kind::REG,""}, {Token::Kind::RPAREN,""}};
 // vector<Token> beq {{Token::Kind::ID,""}, {Token::Kind::REG,""}, {Token::Kind::COMMA,""}, {Token::Kind::REG, ""}, {Token::Kind::COMMA,""}};
 vector<Token> jr {{Token::Kind::ID,""}, {Token::Kind::REG,""}};
 vector<Token> mfhi {{Token::Kind::ID,""}, {Token::Kind::REG,""}};
 
-vector<vector<Token>> FORMATS {add, mult, lw, jr, mfhi};
+vector<vector<Token>> FORMATS {add, mult, jr, mfhi};
 unordered_map<string, int> OPCODES {
     {"add", 0}, {"sub", 0}, {"slt", 0}, {"sltu", 0},
     {"mult", 1}, {"div", 1}, {"divu", 1}, {"multu", 1},
@@ -40,6 +40,18 @@ bool validFormat(vector<Token> line, string opcode){
             && (line[5].getKind() == Token::Kind::INT 
             || line[5].getKind() == Token::Kind::HEXINT 
             || line[5].getKind() == Token::Kind::ID)
+        );
+    }
+    if (line[0].getLexeme() == "lw" || line[0].getLexeme() == "sw") {
+        return (
+            line.size() == 7 
+            && line[1].getKind() == Token::Kind::REG 
+            && line[2].getKind() == Token::Kind::COMMA 
+            && (line[3].getKind() == Token::Kind::INT
+            || line[3].getKind() == Token::Kind::HEXINT)
+            && line[4].getKind() == Token::Kind::LPAREN 
+            && line[5].getKind() == Token::Kind::REG 
+            && line[6].getKind() == Token::Kind::RPAREN
         );
     }
     vector<Token> format = FORMATS[OPCODES[opcode]];
