@@ -15,7 +15,7 @@ void output_word(int64_t word) {
     std::cerr << "Number out of range: " << word << std::endl;
     throw 1;
   }
-  bool readable = 0;
+  bool readable = 1;
   if (readable) {
     for(int shift=24; shift>=0; shift-=8) {
       char c = (word >> shift) & 0xff;
@@ -131,7 +131,7 @@ int main() {
         if (ins == "add") 
           f = 32; // 10 000
         else if (ins == "sub")
-          f = 24; // 1 1000
+          f = 34; // 1 0000
         
         int d = line[1].toNumber();
         int s = line[3].toNumber();
