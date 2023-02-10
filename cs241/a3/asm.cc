@@ -35,11 +35,19 @@ void output_word(int64_t word) {
 }
 
 int register_format(int s, int t, int d, int f) {
+  if (s < 0 || s > 31 || t < 0 || t > 31 || d < 0 || d > 31) {
+    std::cerr << "Invalid register" << std::endl;
+    throw 1;
+  }
   // cout << "register format: " << s << " " << t << " " << d << " " << f << endl;
   return s << 21 | t << 16 | d << 11 | f;
 }
 
 int immediate_format(int s, int t, int i, int f) {
+  if (s < 0 || s > 31 || t < 0 || t > 31) {
+    std::cerr << "Invalid register" << std::endl;
+    throw 1;
+  }
   // cout << "immediate format: " << s << " " << t << " " << i << " " << f << endl;
   return f << 26 | s << 21 | t << 16 | (i & 0xffff);
 }
