@@ -17,9 +17,8 @@ vector<vector<Token>> FORMATS {add, mult, jr, mfhi};
 unordered_map<string, int> OPCODES {
     {"add", 0}, {"sub", 0}, {"slt", 0}, {"sltu", 0},
     {"mult", 1}, {"div", 1}, {"divu", 1}, {"multu", 1},
-    {"lw", 2}, {"sw", 2},
-    {"jr", 3}, {"jalr", 3},
-    {"mfhi", 4}, {"mflo", 4}, {"lis", 4}};
+    {"jr", 2}, {"jalr", 2},
+    {"mfhi", 3}, {"mflo", 3}, {"lis", 3}};
 
 bool validFormat(vector<Token> line, string opcode){
     if (line[0].getKind() == Token::Kind::WORD) {

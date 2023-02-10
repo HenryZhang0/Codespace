@@ -99,7 +99,7 @@ int main() {
           buffer.push_back(tokenLineNoLabels); // add to buffer
           programCounter++;
         }
-
+      
       if (!validFormat(tokenLineNoLabels, tokenLineNoLabels[0].getLexeme())) {
         std::cerr << "Invalid format" << std::endl;
         throw 1;
