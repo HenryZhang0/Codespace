@@ -124,7 +124,7 @@ int main() {
           output_word(line[1].toNumber());
         }
       }
-      else if (ins == "add" || ins == "sub" || ins == "slt" || ins == "stlu")
+      else if (ins == "add" || ins == "sub" || ins == "slt" || ins == "sltu")
       {
         // 000000 sssss ttttt ddddd 00000 ffffff
         int f;
@@ -132,6 +132,10 @@ int main() {
           f = 32; // 10 000
         else if (ins == "sub")
           f = 34; // 1 0000
+        else if (ins == "slt")
+          f = 42; // 1 0100
+        else if (ins == "sltu")
+          f = 43; // 1 0101
         
         int d = line[1].toNumber();
         int s = line[3].toNumber();
