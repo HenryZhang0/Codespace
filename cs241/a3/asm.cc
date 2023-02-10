@@ -37,7 +37,7 @@ int immediate_format(char s, int t, char i, int f) {
   return f << 26 | s << 21 | t << 16 | (i & 0xffff);
 }
 
-char string_to_binary(string s) {
+int string_to_binary(string s) {
   int i = 0;
   if (s[0] == '0' && s[1] == 'x') {
     i = stoi(s.substr(2), nullptr, 16);
