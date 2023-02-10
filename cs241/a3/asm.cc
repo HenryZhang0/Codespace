@@ -7,7 +7,14 @@
 
 using namespace std;
 
-void output_word(int word) {
+bool check_range(int64_t value) {
+  return value >= -2147483648 && value <= 4294967295;
+}
+void output_word(int64_t word) {
+  if (!check_range(word)) {
+    std::cerr << "Number out of range: " << word << std::endl;
+    throw 1;
+  }
   bool readable = 0;
   if (readable) {
     for(int shift=24; shift>=0; shift-=8) {
@@ -35,16 +42,6 @@ int register_format(int s, int t, int d, int f) {
 int immediate_format(char s, int t, char i, int f) {
   // cout << "immediate format: " << s << " " << t << " " << i << " " << f << endl;
   return f << 26 | s << 21 | t << 16 | (i & 0xffff);
-}
-
-int string_to_binary(string s) {
-  int i = 0;
-  if (s[0] == '0' && s[1] == 'x') {
-    i = stoi(s.substr(2), nullptr, 16);
-  } else {
-    i = stoi(s);
-  }
-  return i;
 }
 
 int main() {
@@ -110,7 +107,7 @@ int main() {
         if (line[1].getKind() == Token::Kind::ID) {
           output_word(label_map[line[1].getLexeme() + ":"]);
         } else {
-          output_word(string_to_binary(line[1].getLexeme()));
+          output_word(line[1].toNumber());
         }
       }
       else if (ins == "add" || ins == "sub" || ins == "slt" || ins == "stlu")
@@ -122,9 +119,9 @@ int main() {
         else if (ins == "sub")
           f = 24; // 1 1000
         
-        int s = stoi(line[1].getLexeme().substr(1));
-        int t = stoi(line[3].getLexeme().substr(1));
-        int d = stoi(line[5].getLexeme().substr(1));
+        int s = line[1].toNumber();
+        int t = line[3].toNumber();
+        int d = line[5].toNumber();
 
         int instruction = register_format(s, t, d, f);
         output_word(instruction);
@@ -141,8 +138,8 @@ int main() {
           f = 25; // 1 1001
         else if (ins == "divu")
           f = 27; // 1 1011
-        int s = stoi(line[1].getLexeme().substr(1));
-        int t = stoi(line[3].getLexeme().substr(1));
+        int s = line[1].toNumber();
+        int t = line[3].toNumber();
         
         int instruction = register_format(s, t, 0, f);
         output_word(instruction);
@@ -155,9 +152,9 @@ int main() {
           f = 35; // 100 011
         else if (ins == "sw")
           f = 43; // 101 011
-        int s = stoi(line[1].getLexeme().substr(1));
-        int t = stoi(line[5].getLexeme().substr(1));
-        char i = string_to_binary(line[3].getLexeme());
+        int64_t s = line[1].toNumber();
+        int64_t t = line[5].toNumber();
+        int64_t i = line[3].toNumber();
 
         output_word(immediate_format(s, t, i, f));
       }
@@ -169,14 +166,14 @@ int main() {
         else if (ins == "bne")
           f = 5;
         
-        int s = stoi(line[1].getLexeme().substr(1));
-        int t = stoi(line[3].getLexeme().substr(1));
+        int64_t s = line[1].toNumber();
+        int64_t t = line[3].toNumber();
 
-        char i;
+        int64_t i;
         if (line[5].getKind() == Token::Kind::ID) {
           i = label_map[line[5].getLexeme() + ":"];
         } else {
-          i = string_to_binary(line[5].getLexeme());
+          i = line[5].toNumber();
         }
 
         output_word(immediate_format(s, t, i, f));
@@ -189,7 +186,7 @@ int main() {
           f = 8;
         else if (ins == "jalr")
           f = 9;
-        int s = stoi(line[1].getLexeme().substr(1));
+        int64_t s = line[1].toNumber();
         output_word(register_format(s, 0, 0, f));
       }
 
@@ -202,7 +199,7 @@ int main() {
           f = 18;
         else if (ins == "lis")
           f = 20;
-        int d = stoi(line[1].getLexeme().substr(1));
+        int64_t d = line[1].toNumber();
         output_word(register_format(0, 0, d, f));
       }
       
