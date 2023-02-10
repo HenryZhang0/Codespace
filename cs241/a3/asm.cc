@@ -39,7 +39,7 @@ int register_format(int s, int t, int d, int f) {
   return s << 21 | t << 16 | d << 11 | f;
 }
 
-int immediate_format(char s, int t, char i, int f) {
+int immediate_format(int s, int t, int i, int f) {
   // cout << "immediate format: " << s << " " << t << " " << i << " " << f << endl;
   return f << 26 | s << 21 | t << 16 | (i & 0xffff);
 }
