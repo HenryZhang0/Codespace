@@ -15,7 +15,7 @@ void output_word(int64_t word) {
     std::cerr << "Number out of range: " << word << std::endl;
     throw 1;
   }
-  bool readable = 1;
+  bool readable = 0;
   if (readable) {
     for(int shift=24; shift>=0; shift-=8) {
       char c = (word >> shift) & 0xff;
@@ -35,7 +35,7 @@ void output_word(int64_t word) {
 }
 
 int register_format(int s, int t, int d, int f) {
-  cout << "register format: " << s << " " << t << " " << d << " " << f << endl;
+  // cout << "register format: " << s << " " << t << " " << d << " " << f << endl;
   return s << 21 | t << 16 | d << 11 | f;
 }
 
