@@ -107,6 +107,10 @@ int main() {
       if (ins == ".word") 
       {
         if (line[1].getKind() == Token::Kind::ID) {
+          if (label_map.find(line[1].getLexeme() + ":") == label_map.end()) {
+            std::cerr << "Undefined label: " << line[1].getLexeme() << std::endl;
+            throw 2;
+          }
           output_word(label_map[line[1].getLexeme() + ":"]);
         } else {
           output_word(line[1].toNumber());
@@ -173,7 +177,12 @@ int main() {
 
         int64_t i;
         if (line[5].getKind() == Token::Kind::ID) {
+          if (label_map.find(line[5].getLexeme() + ":") == label_map.end()) {
+            std::cerr << "Label not found: " << line[5].getLexeme() << std::endl;
+            throw 1;
+          }
           i = label_map[line[5].getLexeme() + ":"]/4;
+          
           // cout << i << " " << programCounter << endl;
           i = i - programCounter;
         } else {
