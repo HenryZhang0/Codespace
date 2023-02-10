@@ -85,7 +85,7 @@ int main() {
         } else {
           if (label_map.find(token.getLexeme()) != label_map.end()) {
             std::cerr << "Duplicate label: " << token.getLexeme() << std::endl;
-            throw 1;
+            throw 1; 
           }
           label_map[token.getLexeme()] = programCounter*4;
           // cout << "label: " << token.getLexeme() << " value: " << programCounter*4 << endl;
