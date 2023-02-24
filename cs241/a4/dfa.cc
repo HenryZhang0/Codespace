@@ -112,12 +112,16 @@ int main() {
   while(in >> s) {
     //// Variable 's' contains an input string for the DFA
     string state = init_state;
-    for ( char c : s ) {
-      if (transitions[state].find(c) == transitions[state].end()) {
-        break;
+    if (s != EMPTY) {
+      for ( char c : s ) {
+        if (transitions[state].find(c) == transitions[state].end()) {
+          state = "";
+          break;
+        }
+        state = transitions[state][c];
       }
-      state = transitions[state][c];
     }
+    cout << s << ' ';
     if (acceptings.find(state) != acceptings.end()) {
       cout << "true" << endl;
     } else {
