@@ -35,15 +35,19 @@ int main() {
   }
 
   string INPUT;
-  getline(in, INPUT);
 
   vector<string> reduction_sequence;
   vector<string> input_sequence;
 
-  std::istringstream iss(INPUT);
-  std::string token;
-  while(iss >> token) {
-    input_sequence.push_back(token);
+  while(std::getline(in, s)) {
+    if (s == ".ACTIONS") {
+      break;
+    }
+    std::istringstream iss(s);
+    std::string token;
+    while(iss >> token) {
+      input_sequence.push_back(token);
+    }
   }
 
   while(std::getline(in, s)) {

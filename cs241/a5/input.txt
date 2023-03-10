@@ -3,14 +3,47 @@ S BOF P EOF
 P ( P ) P
 P .EMPTY
 .INPUT
-BOF ( ) EOF
+BOF
+( )
+( ( ) )
+( ( ) ( ( ) ) )
+EOF
 .ACTIONS
+print
+shift
+print
+shift
+reduce 2
+shift
 print
 shift
 shift
 reduce 2
 shift
 reduce 2
+reduce 1
+shift
+print
+shift
+shift
+reduce 2
+shift
+shift
+shift
+reduce 2
+shift
+reduce 2
+reduce 1
+shift
+reduce 2
+reduce 1
+reduce 1
+shift
+print
+reduce 2
+reduce 1
+print
+reduce 1
 print
 reduce 1
 print
