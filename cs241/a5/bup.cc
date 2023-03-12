@@ -53,10 +53,12 @@ int main() {
   while(std::getline(in, s)) {
     std::istringstream iss(s);
     std::vector<std::string> tokens;
+   
     std::string token;
     while(iss >> token) {
       tokens.push_back(token);
     }
+
     string action = tokens[0];
     if(action == "shift") {
       reduction_sequence.push_back(input_sequence[0]);
@@ -68,14 +70,8 @@ int main() {
       for (string s : rule.rhs) {
         if (s == ".EMPTY") {
           continue;
-        } else {
-          // if (reduction_sequence.back() != s) {
-          //   cout << "ERROR: " << s << " != " << reduction_sequence.back() << endl;
-          //   return 0;
-          // }
-          reduction_sequence.pop_back();
-
-        }
+        } 
+        reduction_sequence.pop_back();
       }
       reduction_sequence.push_back(rule.lhs);
 

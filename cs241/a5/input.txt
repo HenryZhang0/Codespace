@@ -1,54 +1,40 @@
 .CFG
-S BOF P EOF
-P ( P ) P
-P .EMPTY
+S BOF expr EOF
+expr expr - term
+expr term
+term id
+term ( expr )
 .INPUT
-BOF
-( )
-( ( ) )
-( ( ) ( ( ) ) )
-EOF
-.ACTIONS
-print
-shift
-print
-shift
-reduce 2
-shift
-print
-shift
-shift
-reduce 2
-shift
-reduce 2
-reduce 1
-shift
-print
-shift
-shift
-reduce 2
-shift
-shift
-shift
-reduce 2
-shift
-reduce 2
-reduce 1
-shift
-reduce 2
-reduce 1
-reduce 1
-shift
-print
-reduce 2
-reduce 1
-print
-reduce 1
-print
-reduce 1
-print
-shift
-print
-reduce 0
-print
+BOF id - ( id - id ) - id EOF
+.TRANSITIONS
+0 BOF 6
+1 id 2
+1 ( 3
+1 term 8
+3 id 2
+3 ( 3
+3 term 4
+3 expr 7
+6 id 2
+6 ( 3
+6 term 4
+6 expr 10
+7 - 1
+7 ) 9
+10 - 1
+10 EOF 5
+.REDUCTIONS
+2 3 -
+2 3 )
+2 3 EOF
+4 2 -
+4 2 )
+4 2 EOF
+5 0 .ACCEPT
+8 1 -
+8 1 )
+8 1 EOF
+9 4 -
+9 4 )
+9 4 EOF
 .END
