@@ -150,6 +150,9 @@ int main() {
     }
     
     string a = input_sequence[i];
+    if (i == input_sequence.size()) {
+      a = "";
+    }
     while (reductions[state_stack.back()].find(a) != reductions[state_stack.back()].end()) {
       int rule_num = reductions[state_stack.back()][a];
       Rule rule = rules[rule_num];
