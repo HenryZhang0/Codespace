@@ -149,9 +149,9 @@ int main() {
       cout << endl;
     }
     
-    string a = input_sequence[i];
-    if (i == input_sequence.size()) {
-      a = "";
+    string a = "";
+    if (i != input_sequence.size()) {
+      a = input_sequence[i];
     }
     while (reductions[state_stack.back()].find(a) != reductions[state_stack.back()].end() || (a == "" && reductions[state_stack.back()].find(".ACCEPT") != reductions[state_stack.back()].end())) {
       int rule_num = reductions[state_stack.back()][a];
