@@ -279,7 +279,7 @@ nonterminals["EOF"].push("EOF");
     else
       break;
     if (transitions[state_stack.back()].find(a) == transitions[state_stack.back()].end()) {
-      cerr << "ERROR at " << i + 1<< endl;
+      cerr << "ERROR at " << i << endl;
       return 0;
     }
     state_stack.push_back(transitions[state_stack.back()][a]);

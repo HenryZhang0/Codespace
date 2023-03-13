@@ -1,5 +1,5 @@
 INT int
-WAIN wain
+ID main
 LPAREN (
 INT int
 ID a
