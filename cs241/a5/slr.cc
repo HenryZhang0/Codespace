@@ -135,7 +135,10 @@ int main() {
       Rule rule = rules[rule_num];
       
 
-      for (int j = 0; j < rule.rhs.size(); ++j) {
+      for (auto r : rule.rhs) {
+        if (r == ".EMPTY") {
+          continue;
+        }
         symbol_stack.pop_back();
         state_stack.pop_back();
       }
