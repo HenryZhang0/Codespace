@@ -153,7 +153,7 @@ int main() {
     if (i == input_sequence.size()) {
       a = "";
     }
-    while (reductions[state_stack.back()].find(a) != reductions[state_stack.back()].end()) {
+    while (reductions[state_stack.back()].find(a) != reductions[state_stack.back()].end() || (a == "" && reductions[state_stack.back()].find(".ACCEPT") != reductions[state_stack.back()].end())) {
       int rule_num = reductions[state_stack.back()][a];
       Rule rule = rules[rule_num];
       
@@ -181,26 +181,28 @@ int main() {
 
     if (a != "")
       symbol_stack.push_back(a);
+    else
+      break;
     if (transitions[state_stack.back()].find(a) == transitions[state_stack.back()].end()) {
-      if (reductions [state_stack.back()].find(".ACCEPT") != reductions[state_stack.back()].end()) {
-        int rule_num = reductions[state_stack.back()][".ACCEPT"];
-        Rule rule = rules[rule_num];
-        for (int j = 0; j < rule.rhs.size(); ++j) {
-          symbol_stack.pop_back();
-          state_stack.pop_back();
-        }
-       symbol_stack.push_back(rule.lhs); 
+      // if (reductions [state_stack.back()].find(".ACCEPT") != reductions[state_stack.back()].end()) {
+      //   int rule_num = reductions[state_stack.back()][".ACCEPT"];
+      //   Rule rule = rules[rule_num];
+      //   for (int j = 0; j < rule.rhs.size(); ++j) {
+      //     symbol_stack.pop_back();
+      //     state_stack.pop_back();
+      //   }
+      //  symbol_stack.push_back(rule.lhs); 
 
-        for(int i = 0; i < symbol_stack.size(); ++i) {
-          cout << symbol_stack[i] << " ";
-        }
-        cout << ". ";
-        for(int j = i; j < input_sequence.size(); ++j) {
-          cout << input_sequence[j] << " ";
-        }
-        cout << endl;
-        return 0;
-      }
+      //   for(int i = 0; i < symbol_stack.size(); ++i) {
+      //     cout << symbol_stack[i] << " ";
+      //   }
+      //   cout << ". ";
+      //   for(int j = i; j < input_sequence.size(); ++j) {
+      //     cout << input_sequence[j] << " ";
+      //   }
+      //   cout << endl;
+      //   return 0;
+      // }
       
       cout << "ERROR" << endl;
       return 0;
