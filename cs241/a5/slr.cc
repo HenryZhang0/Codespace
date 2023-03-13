@@ -184,49 +184,11 @@ int main() {
     else
       break;
     if (transitions[state_stack.back()].find(a) == transitions[state_stack.back()].end()) {
-      // if (reductions [state_stack.back()].find(".ACCEPT") != reductions[state_stack.back()].end()) {
-      //   int rule_num = reductions[state_stack.back()][".ACCEPT"];
-      //   Rule rule = rules[rule_num];
-      //   for (int j = 0; j < rule.rhs.size(); ++j) {
-      //     symbol_stack.pop_back();
-      //     state_stack.pop_back();
-      //   }
-      //  symbol_stack.push_back(rule.lhs); 
-
-      //   for(int i = 0; i < symbol_stack.size(); ++i) {
-      //     cout << symbol_stack[i] << " ";
-      //   }
-      //   cout << ". ";
-      //   for(int j = i; j < input_sequence.size(); ++j) {
-      //     cout << input_sequence[j] << " ";
-      //   }
-      //   cout << endl;
-      //   return 0;
-      // }
-      
-      cout << "ERROR" << endl;
+      cout << "ERROR at " << symbol_stack.size() << endl;
       return 0;
-      
     }
     state_stack.push_back(transitions[state_stack.back()][a]);
   }
-
-  // for (int i = 0; i < input_sequence.size(); ++i) {
-  //   {
-  //     cout << "State stack: ";
-  //     for(int j = 0; j < state_stack.size(); ++j) {
-  //       cout << state_stack[j] << " ";
-  //     }
-  //     cout << endl;
-  //     for(int i = 0; i < reduction_sequence.size(); ++i) {
-  //       cout << reduction_sequence[i] << " ";
-  //     }
-  //     cout << ". ";
-  //     for(int j = i; j < input_sequence.size(); ++j) {
-  //       cout << input_sequence[j] << " ";
-  //     }
-  //     cout << endl;
-  //   }}
 
   
   cout << "ACCEPT" << endl;

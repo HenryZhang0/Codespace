@@ -5,7 +5,7 @@ expr term
 term id
 term ( expr )
 .INPUT
-BOF id - ( id - id ) - id EOF
+BOF id - ( id - ) - id EOF
 .TRANSITIONS
 0 BOF 6
 1 id 2
