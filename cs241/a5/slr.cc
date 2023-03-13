@@ -94,16 +94,6 @@ int main() {
     }
   }
 
-  // print reductions
-  for (auto state : reductions) {
-    cout << state.first << ": ";
-    for (auto reduction : state.second) {
-      cout << reduction.first << " -> " << reduction.second << ", ";
-    }
-    cout << endl;
-  }
-  cout << endl;
-
 // SLR(1) parsing algorithm
 // 1:  stateStack.push q0
 // 2: for each symbol a in ` x a from left to right do
@@ -121,20 +111,7 @@ int main() {
 
   vector<int> state_stack;
   state_stack = {0};
-  // symbol stack
   vector<string> symbol_stack;
-
-  // print function
-  // auto print = [&]() {
-  //   for(int i = 0; i < symbol_stack.size(); ++i) {
-  //     cout << symbol_stack[i] << " ";
-  //   }
-  //   cout << ". ";
-  //   for(int j = 0; j < input_sequence.size(); ++j) {
-  //     cout << input_sequence[j] << " ";
-  //   }
-  //   cout << endl;
-  // };
 
   for (int i = 0; i <= input_sequence.size(); ++i) {
     // print state
@@ -191,6 +168,5 @@ int main() {
   }
 
   
-  cout << "ACCEPT" << endl;
   return 0;
 }
