@@ -5,7 +5,7 @@
 #include <vector>
 #include <sstream>
 #include <unordered_map>
-#include <queue>
+#include <stack>
 
 using namespace std;
 
@@ -32,44 +32,50 @@ vector<Node> parse_tree;
 vector<Rule> rules;
 unordered_map<int, unordered_map<string, int>> transitions;
 unordered_map<int, unordered_map<string, int>> reductions;
-unordered_map<string, queue<string>> nonterminals;
-void printTree(int index, int indention = 0) {
+unordered_map<string, stack<string>> nonterminals;
+unordered_map<int, int> used_rules;
+string printTree(int index, int indention = 0) {
+  string result = "";
   if (index < 0) {
-    return;
+    return "";
   }
   Rule rule = rules[parse_tree[index].rule_num];
   // print rule
-  for (int i = 0; i < indention; ++i)  cout << " ";
-  
-  cout << rule.lhs << " ";
-
-  for (auto r : rule.rhs) {
-    cout << r << " ";
-  }
-  cout << endl;
+ 
 
   int last_reduction = index;
-  for (auto r : rule.rhs) {
+  for (int i = rule.rhs.size() - 1; i >= 0; --i) {
+    string r = rule.rhs[i];
     // if r is a terminal
     if (nonterminals.find(r) != nonterminals.end()) {
-      for (int i = 0; i < indention; ++i)  cout << " ";
-      cout << r << " " << nonterminals[r].front() << endl;
+      result = r + " " + nonterminals[r].top() + "\n" + result;
       nonterminals[r].pop();
     } else {
       // find index of r in parse_tree
       for (int i = index - 1; i >= 0; --i) {
-        if (parse_tree[i].rule_num == -1) {
+        if (used_rules[i] == 1) {
           continue;
         }
         Rule rule2 = rules[parse_tree[i].rule_num];
         if (rule2.lhs == r) {
           // parse_tree[i].rule_num = -1;
-          printTree(i, indention);
+          // set parse_tree[i].rule_num to -1
+          used_rules[i] = 1;
+          // return 0;
+          result = printTree(i, indention + 2) + result;
           break;
         }
       }
     }
   }
+  string head = "";
+  head = rule.lhs + " ";
+
+  for (auto r : rule.rhs) {
+    head += r + " ";
+  } head += "\n";
+  result = head + result;
+  return result;
 }
 int main() {
   // std::istream& in = std::cin;
@@ -284,8 +290,10 @@ nonterminals["EOF"].push("EOF");
     }
     state_stack.push_back(transitions[state_stack.back()][a]);
   }
+  // return 0;
 
+// cout << endl << endl;
   
-  printTree(parse_tree.size() - 1);
+  cout << printTree(parse_tree.size() - 1);
   return 0;
 }
