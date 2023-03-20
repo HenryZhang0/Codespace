@@ -14,6 +14,18 @@ struct Node {
   string type;
   std::vector<Node*> children;
 };
+Node *root;
+void deleteNode(Node *node) {
+  for (int i = 0; i < node->children.size(); i++) {
+    deleteNode(node->children[i]);
+  }
+  delete node;
+}
+
+void exit() {
+  deleteNode(root);
+  exit(1);
+}
 
 bool isTerminal(vector<string> s) {
   if (s[1] == ".EMPTY") {
@@ -70,9 +82,9 @@ Node* findChild(Node *node, string name) {
 }
 
 void printNode(Node *node) {
-  cout << node->rule;
+  cout << node->name;
   if (node->lexeme != "") {
-    // cout << " " << node->lexeme;
+    cout << " " << node->lexeme;
   }
   if (node->type != "") {
     cout << " : " << node->type;
@@ -219,15 +231,9 @@ void traverse(Node *node) {
   }
 }
 
-void deleteNode(Node *node) {
-  for (int i = 0; i < node->children.size(); i++) {
-    deleteNode(node->children[i]);
-  }
-  delete node;
-}
 
 int main() {
-  Node *root = scan(NULL);
+  root = scan(NULL);
   traverse(root);
   printNode(root);
 
