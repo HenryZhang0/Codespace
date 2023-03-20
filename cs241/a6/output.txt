@@ -9,7 +9,7 @@ dcl type ID
 type INT STAR
 INT int
 STAR *
-ID b : int
+ID b : int*
 COMMA ,
 dcl type ID
 type INT

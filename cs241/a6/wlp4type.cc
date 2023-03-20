@@ -103,9 +103,9 @@ void typeDcl(Node *node) {
   if (node->name != "dcl") return;
   Node *type = node->children[0];
   Node *id = node->children[1];
-  if (type->children[0]->name == "INT") {
+  if (type->children.size() == 1) {
     id->type = "int";
-  } else if (type->children[0]->name == "INTSTAR") {
+  } else if (type->children.size() == 2) {
     id->type = "int*";
   } else {
     cerr << "ERROR: unknown type" << endl;
