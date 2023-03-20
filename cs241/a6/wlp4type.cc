@@ -10,6 +10,7 @@ struct Node {
   std::string name;
   Node *parent;
   string lexeme;
+  string type;
   std::vector<Node*> children;
 };
 
@@ -57,13 +58,6 @@ Node* scan(Node *parent) {
   return newNode;
 }
 
-// void printNode(Node *node) {
-//   // cout << node->name << endl;
-//   for (int i = 0; i < node->children.size(); i++) {
-//     cout << node->name << " children: " << node->children.size() << endl;
-//     printNode(node->children[i]);
-//   }
-// }
 Node* findChild(Node *node, string name) {
   for (int i = 0; i < node->children.size(); i++) {
     if (node->children[i]->name == name) {
@@ -72,10 +66,123 @@ Node* findChild(Node *node, string name) {
   }
   return NULL;
 }
+
 void printNode(Node *node) {
-  cout << node->name << endl;
+  cout << node->name;
+  if (node->lexeme != "") {
+    cout << " " << node->lexeme;
+  }
+  if (node->type != "") {
+    cout << " : " << node->type;
+  }
+  cout << endl;
   for (int i = 0; i < node->children.size(); i++) {
     printNode(node->children[i]);
+  }
+}
+
+
+void typeDcl(Node *node) {
+  if (node->name != "dcl") return;
+  Node *type = node->children[0];
+  Node *id = node->children[1];
+  if (type->children[0]->name == "INT") {
+    id->type = "int";
+  } else if (type->children[0]->name == "INTSTAR") {
+    id->type = "int*";
+  } else {
+    cerr << "ERROR: unknown type" << endl;
+    exit(1);
+  }
+}
+
+string typeFactor(Node *node) {
+  if (node->name != "factor") return "";
+  Node *factor;
+  Node *expr;
+  Node *id;
+  Node *num;
+  if (node->children.size() == 1) {
+
+    factor = node->children[0];
+    if (factor->name == "ID") {
+      // id = factor->children[0];
+      // node->type = id->type;
+      // return id->type;
+      return "temp";
+    } else if (factor->name == "NUM") {
+      node->type = "int";
+      factor->type = "int";
+      return "int";
+    } else if (factor->name == "NULL") {
+      node->type = "null";
+      return "null";
+    } else {
+      cerr << "ERROR: unknown factor type" << factor->name << endl;
+      exit(1);
+    }
+  }
+  return "";
+  // else if (node->children.size() == 2) {
+  //   factor = node->children[1];
+  //   string type = typeFactor(factor);
+  //   if (type != "int*") {
+  //     cerr << "ERROR: factor is not an int*" << endl;
+  //     exit(1);
+  //   }
+  //   node->type = "int";
+  //   return "int";
+  // } else {
+  //   expr = node->children[1];
+  //   string type = typeExpr(expr);
+  //   if (type != "int") {
+  //     cerr << "ERROR: expr is not an int" << endl;
+  //     exit(1);
+  //   }
+  //   node->type = "int";
+  //   return "int";
+  // }
+}
+string typeTerm(Node *node) {
+  if (node->name != "term") return "";
+  Node *factor;
+  Node *term;
+  if (node->children.size() == 1) {
+    factor = node->children[0];
+    string type = typeFactor(factor);
+    node->type = type;
+    return type;
+  } else {
+    term = node->children[0];
+    factor = node->children[2];
+    string type1 = typeTerm(term);
+    string type2 = typeFactor(factor);
+    node->type = type1;
+    return type1;
+  }
+  
+}
+
+string typeExpr(Node *node) {
+  if (node->name != "expr") return "";
+  Node *term;
+  Node *expr;
+  if (node->children.size() == 1) {
+    term = node->children[0];
+    string type = typeTerm(term);
+    node->type = type;
+    return type;
+  } else {
+    expr = node->children[0];
+    term = node->children[2];
+    string type1 = typeExpr(expr);
+    string type2 = typeTerm(term);
+    if (type1 != type2) {
+      cerr << "ERROR: expr types do not match" << endl;
+      exit(1);
+    }
+    node->type = type1;
+    return type1;
   }
 }
 
@@ -94,24 +201,25 @@ void checkMain(Node *node) {
     cerr << "ERROR: wain param 2 is not an int" << endl;
     exit(1);
   }
-  if (returnExpr->children[0]->children[0]->children[0]->name != "NUM") {
+  string returnType = typeExpr(returnExpr);
+  if (returnType != "int") {
     cerr << "ERROR: wain return is not an int" << endl;
     exit(1);
   } 
 }
+
+
 void traverse(Node *node) {
   checkMain(node);
+  typeDcl(node);
   for (int i = 0; i < node->children.size(); i++) {
     traverse(node->children[i]);
   }
 }
 
 int main() {
-  // read parse tree from stdin
   Node *root = scan(NULL);
-
-
-  // printNode(root);
   traverse(root);
+  printNode(root);
   return 0;
 }
