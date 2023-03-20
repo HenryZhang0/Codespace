@@ -95,6 +95,9 @@ void printNode(Node *node) {
   }
 }
 
+string typeExpr(Node *node);
+string typeFactor(Node *node);
+string typeTerm(Node *node);
 
 void typeDcl(Node *node) {
   if (node->name != "dcl") return;
@@ -135,6 +138,28 @@ string typeFactor(Node *node) {
       cerr << "ERROR: unknown factor type" << factor->name << endl;
       exitt();
     }
+  } else if (node->children.size() == 2) {
+    // factor = node->children[1];
+    // string type = typeFactor(factor);
+    // if (type != "int*") {
+    //   cerr << "ERROR: factor is not an int*" << endl;
+    //   exitt();
+    // }
+    // node->type = "int";
+    return "int";
+  } else if (node->children.size() == 3) {
+    if (node->children[0]->name == "LPAREN") {
+      expr = node->children[1];
+      string type = typeExpr(expr);
+      node->type = type;
+      return type;
+    } 
+    
+    return "int";
+  } else if (node->children.size() == 4) {
+    return "int";
+  } else if (node->children.size() == 5) {
+
   }
   return "";
   // else if (node->children.size() == 2) {
