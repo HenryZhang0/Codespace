@@ -217,9 +217,18 @@ void traverse(Node *node) {
   }
 }
 
+void deleteNode(Node *node) {
+  for (int i = 0; i < node->children.size(); i++) {
+    deleteNode(node->children[i]);
+  }
+  delete node;
+}
+
 int main() {
   Node *root = scan(NULL);
   traverse(root);
-  printNode(root);
+  printNode(root)
+
+  deleteNode(root);
   return 0;
 }
