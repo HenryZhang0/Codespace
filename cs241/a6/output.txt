@@ -1,17 +1,17 @@
-start
+start BOF procedures EOF
 BOF BOF
-procedures
-main
+procedures main
+main INT WAIN LPAREN dcl COMMA dcl RPAREN LBRACE dcls statements RETURN expr SEMI RBRACE
 INT int
 WAIN wain
 LPAREN (
-dcl
-type
+dcl type ID
+type INT
 INT int
 ID a : int
 COMMA ,
-dcl
-type
+dcl type ID
+type INT
 INT int
 ID b : int
 RPAREN )
@@ -19,9 +19,9 @@ LBRACE {
 dcls .EMPTY
 statements .EMPTY
 RETURN return
-expr : int
-term : int
-factor : int
+expr term : int
+term factor : int
+factor NUM : int
 NUM 241 : int
 SEMI ;
 RBRACE }

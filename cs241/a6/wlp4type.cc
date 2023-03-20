@@ -8,6 +8,7 @@ using namespace std;
 
 struct Node {
   std::string name;
+  string rule;
   Node *parent;
   string lexeme;
   string type;
@@ -44,6 +45,7 @@ Node* scan(Node *parent) {
   }
  
   newNode->name = tokens[0];
+  newNode->rule = s;
   newNode->parent = parent;
  
   if (isTerminal(tokens)) {
@@ -68,9 +70,9 @@ Node* findChild(Node *node, string name) {
 }
 
 void printNode(Node *node) {
-  cout << node->name;
+  cout << node->rule;
   if (node->lexeme != "") {
-    cout << " " << node->lexeme;
+    // cout << " " << node->lexeme;
   }
   if (node->type != "") {
     cout << " : " << node->type;
