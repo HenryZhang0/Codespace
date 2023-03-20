@@ -12,9 +12,12 @@ struct Node {
   std::vector<Node*> children;
 };
 
-bool isTerminal(string s) {
-  for (int i = 0; i < s.length(); i++) {
-    if (s[i] < 'A' || s[i] > 'Z') {
+bool isTerminal(vector<string> s) {
+  if (s[1] == ".EMPTY") {
+    return true;
+  }
+  for (int i = 0; i < s[0].length(); i++) {
+    if (s[0][i] < 'A' || s[0][i] > 'Z') {
       return false;
     }
   }
@@ -40,23 +43,25 @@ Node* scan(Node *parent) {
     tokens.push_back(token);
   }
  
-  if (isTerminal(tokens[0])) {
-    cout << "terminal: " << tokens[0] << endl;
+  if (isTerminal(tokens)) {
     return newNode;
   }
-
-
-  cout << "parent ";
   cout << newNode->name << endl;
   for (int i = 1; i < tokens.size(); i++) {
-
     Node *child = scan(newNode);
     newNode->children.push_back(child);
   }
-  cout << "endparent" << endl;
-
+  
   return newNode;
 }
+
+// void printNode(Node *node) {
+//   // cout << node->name << endl;
+//   for (int i = 0; i < node->children.size(); i++) {
+//     cout << node->name << " children: " << node->children.size() << endl;
+//     printNode(node->children[i]);
+//   }
+// }
 
 void printNode(Node *node) {
   cout << node->name << endl;
