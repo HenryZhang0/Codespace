@@ -22,7 +22,7 @@ void deleteNode(Node *node) {
   delete node;
 }
 
-void exit() {
+void exitt() {
   deleteNode(root);
   exit(1);
 }
@@ -82,9 +82,9 @@ Node* findChild(Node *node, string name) {
 }
 
 void printNode(Node *node) {
-  cout << node->name;
+  cout << node->rule;
   if (node->lexeme != "") {
-    cout << " " << node->lexeme;
+    // cout << " " << node->lexeme;
   }
   if (node->type != "") {
     cout << " : " << node->type;
@@ -106,7 +106,7 @@ void typeDcl(Node *node) {
     id->type = "int*";
   } else {
     cerr << "ERROR: unknown type" << endl;
-    exit(1);
+    exitt();
   }
 }
 
@@ -133,7 +133,7 @@ string typeFactor(Node *node) {
       return "null";
     } else {
       cerr << "ERROR: unknown factor type" << factor->name << endl;
-      exit(1);
+      exitt();
     }
   }
   return "";
@@ -142,7 +142,7 @@ string typeFactor(Node *node) {
   //   string type = typeFactor(factor);
   //   if (type != "int*") {
   //     cerr << "ERROR: factor is not an int*" << endl;
-  //     exit(1);
+  //     exitt();
   //   }
   //   node->type = "int";
   //   return "int";
@@ -151,7 +151,7 @@ string typeFactor(Node *node) {
   //   string type = typeExpr(expr);
   //   if (type != "int") {
   //     cerr << "ERROR: expr is not an int" << endl;
-  //     exit(1);
+  //     exitt();
   //   }
   //   node->type = "int";
   //   return "int";
@@ -193,7 +193,7 @@ string typeExpr(Node *node) {
     string type2 = typeTerm(term);
     if (type1 != type2) {
       cerr << "ERROR: expr types do not match" << endl;
-      exit(1);
+      exitt();
     }
     node->type = type1;
     return type1;
@@ -209,16 +209,16 @@ void checkMain(Node *node) {
   Node *returnExpr = node->children[11];
   if (param1->children[1]->lexeme == param2->children[1]->lexeme) {
     cerr << "ERROR: wain params have same name " << param1->lexeme << " " << param2->lexeme << endl; 
-    exit(1);
+    exitt();
   }
   if (param2->children[0]->children[0]->name != "INT") {
     cerr << "ERROR: wain param 2 is not an int" << endl;
-    exit(1);
+    exitt();
   }
   string returnType = typeExpr(returnExpr);
   if (returnType != "int") {
     cerr << "ERROR: wain return is not an int" << endl;
-    exit(1);
+    exitt();
   } 
 }
 
