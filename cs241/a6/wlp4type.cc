@@ -227,7 +227,7 @@ void deleteNode(Node *node) {
 int main() {
   Node *root = scan(NULL);
   traverse(root);
-  printNode(root)
+  printNode(root);
 
   deleteNode(root);
   return 0;
