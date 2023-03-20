@@ -236,7 +236,7 @@ void checkMain(Node *node) {
     cerr << "ERROR: wain params have same name " << param1->lexeme << " " << param2->lexeme << endl; 
     exitt();
   }
-  if (param2->children[0]->children[0]->name != "INT") {
+  if (param2->children[0]->children[0]->name != "INT" || param2->children[0]->children.size() == 2) {
     cerr << "ERROR: wain param 2 is not an int" << endl;
     exitt();
   }
