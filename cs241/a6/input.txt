@@ -6,8 +6,9 @@ INT int
 WAIN wain
 LPAREN (
 dcl type ID
-type INT
+type INT STAR
 INT int
+STAR *
 ID a
 COMMA ,
 dcl type ID
@@ -23,17 +24,8 @@ expr term
 term factor
 factor STAR factor
 STAR *
-factor AMP lvalue
-AMP &
-lvalue LPAREN lvalue RPAREN
-LPAREN (
-lvalue STAR factor
-STAR *
-factor AMP lvalue
-AMP &
-lvalue ID
-ID b
-RPAREN )
+factor NULL
+NULL NULL
 SEMI ;
 RBRACE }
 EOF EOF

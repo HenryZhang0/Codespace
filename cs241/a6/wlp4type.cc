@@ -127,8 +127,8 @@ string typeFactor(Node *node) {
       factor->type = "int";
       return "int";
     } else if (factor->name == "NULL") {
-      node->type = "null";
-      return "null";
+      node->type = "int*";
+      return "int*";
     } else {
       cerr << "ERROR: unknown factor type" << factor->name << endl;
       exitt();
@@ -249,6 +249,9 @@ string typeExpr(Node *node) {
       node->type = "int*";
       return "int*";
     } else if (type1 == "int*" && type2 == "int*" && op == "MINUS") {
+      node->type = "int";
+      return "int";
+    } else if (type1 == "int" && type2 == "int") {
       node->type = "int";
       return "int";
     } else {
