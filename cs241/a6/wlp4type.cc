@@ -128,6 +128,7 @@ string typeFactor(Node *node) {
       return "int";
     } else if (factor->name == "NULL") {
       node->type = "int*";
+      factor->type = "int*";
       return "int*";
     } else {
       cerr << "ERROR: unknown factor type" << factor->name << endl;
