@@ -137,6 +137,7 @@ string typeFactor(Node *node) {
     if (node->children[0]->name == "STAR") { // STAR factor
       string type = typeFactor(node->children[1]);
       // remove the star in type
+      cout << "PP" << node->rule << endl;
       string star = type.substr(type.length() - 1, 1);
       string newType = type.substr(0, type.length() - 1);
       if (star != "*") {
@@ -149,14 +150,6 @@ string typeFactor(Node *node) {
       string type = typeLvalue(node->children[1]);
       node->type = type + "*";
       return type + "*";
-    } else if (node->children[0]->name == "NEW") {
-      string type = typeFactor(node->children[3]);
-      if (type != "int") {
-        cerr << "ERROR: expr is not an int" << endl;
-        exitt();
-      }
-      node->type = "int*";
-      return "int*";
     }
     // factor = node->children[1];
     // string type = typeFactor(factor);
@@ -177,8 +170,15 @@ string typeFactor(Node *node) {
     return "int";
   } else if (node->children.size() == 4) {
     return "int";
-  } else if (node->children.size() == 5) {
-
+  } else if (node->children.size() == 5) { // NEW INT LBRACK expr RBRACK
+      string type = typeExpr(node->children[3]);
+      cout << "type: !" << type << endl;
+      if (type != "int") {
+        cerr << "ERROR: expr is not an int" << endl;
+        exitt();
+      }
+      node->type = "int*";
+      return "int*";
   }
   return "";
   // else if (node->children.size() == 2) {
@@ -209,6 +209,7 @@ string typeTerm(Node *node) {
   if (node->children.size() == 1) {
     factor = node->children[0];
     string type = typeFactor(factor);
+    cout << "typeterm: " << node->rule<< endl;
     node->type = type;
     return type;
   } else {
