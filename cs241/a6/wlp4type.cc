@@ -252,6 +252,11 @@ string typeDcl(Node *node) {
   if (node->name != "dcl") return "";
   Node *type = node->children[0];
   Node *id = node->children[1];
+  // if already in symbol table, error
+  if (symbolTable.find(id->lexeme) != symbolTable.end()) {
+    cerr << "ERROR: duplicate variable " << id->lexeme << endl;
+    exitt();
+  }
   if (type->children.size() == 1) {
     id->type = "int";
     symbolTable[id->lexeme] = "int";
