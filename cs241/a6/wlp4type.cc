@@ -230,6 +230,7 @@ string typeTerm(Node *node) {
 string typeExpr(Node *node) {
   if (node->name != "expr") return "";
   Node *term;
+  Node *oper;
   Node *expr;
   if (node->children.size() == 1) {
     term = node->children[0];
@@ -238,9 +239,21 @@ string typeExpr(Node *node) {
     return type;
   } else {
     expr = node->children[0];
+    oper = node->children[1];
     term = node->children[2];
     string type1 = typeExpr(expr);
     string type2 = typeTerm(term);
+    string op = oper->name;
+    if (type1 == "int*" && type2 == "int" && (op == "PLUS" || op == "MINUS")) {
+      node->type = "int*";
+      return "int*";
+    } else if (type1 == "int" && type2 == "int*" && op == "PLUS") {
+      node->type = "int*";
+      return "int*";
+    } else if (type1 == "int*" && type2 == "int*") {
+      cerr << "ERROR: expr types do not match" << endl;
+      exitt();
+    }
     if (type1 != type2) {
       cerr << "ERROR: expr types do not match" << endl;
       exitt();
