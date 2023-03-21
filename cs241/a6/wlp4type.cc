@@ -249,10 +249,9 @@ string typeExpr(Node *node) {
       node->type = "int*";
       return "int*";
     } else if (type1 == "int*" && type2 == "int*") {
-      cerr << "ERROR: expr types do not match" << endl;
-      exitt();
-    }
-    if (type1 != type2) {
+      node->type = "int";
+      return "int";
+    } else {
       cerr << "ERROR: expr types do not match" << endl;
       exitt();
     }

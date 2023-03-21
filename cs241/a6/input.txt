@@ -23,19 +23,16 @@ expr term
 term factor
 factor STAR factor
 STAR *
-factor LPAREN expr RPAREN
+factor AMP lvalue
+AMP &
+lvalue LPAREN lvalue RPAREN
 LPAREN (
-expr term
-term factor
-factor NEW INT LBRACK expr RBRACK
-NEW new
-INT int
-LBRACK [
-expr term
-term factor
-factor ID
+lvalue STAR factor
+STAR *
+factor AMP lvalue
+AMP &
+lvalue ID
 ID b
-RBRACK ]
 RPAREN )
 SEMI ;
 RBRACE }
