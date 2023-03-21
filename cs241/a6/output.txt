@@ -6,15 +6,15 @@ INT int
 WAIN wain
 LPAREN (
 dcl type ID
-type INT
-INT int
-ID b : int
-COMMA ,
-dcl type ID
 type INT STAR
 INT int
 STAR *
 ID a : int*
+COMMA ,
+dcl type ID
+type INT
+INT int
+ID b : int
 RPAREN )
 LBRACE {
 dcls .EMPTY
@@ -22,8 +22,10 @@ statements .EMPTY
 RETURN return
 expr term : int
 term factor : int
-factor NUM : int
-NUM 241 : int
+factor STAR factor : int
+STAR *
+factor ID : int*
+ID a : int*
 SEMI ;
 RBRACE }
 EOF EOF

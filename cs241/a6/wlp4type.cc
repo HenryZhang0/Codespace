@@ -131,7 +131,19 @@ string typeFactor(Node *node) {
       cerr << "ERROR: unknown factor type" << factor->name << endl;
       exitt();
     }
-  } else if (node->children.size() == 2) {
+  } else if (node->children.size() == 2) { // PROBLEM
+    if (node->children[0]->name == "STAR") {
+      string type = typeFactor(node->children[1]);
+      // remove the star in type
+      string star = type.substr(type.length() - 1, 1);
+      string newType = type.substr(0, type.length() - 1);
+      if (star != "*") {
+        cerr << "ERROR: factor is not an int*" << endl;
+        exitt();
+      }
+      node->type = newType;
+      return newType;
+    }
     // factor = node->children[1];
     // string type = typeFactor(factor);
     // if (type != "int*") {
@@ -195,6 +207,17 @@ string typeTerm(Node *node) {
   }
   
 }
+// expr → expr PLUS term
+// expr → expr MINUS term
+// term → term STAR factor
+// term → term SLASH factor
+// term → term PCT factor
+// factor → AMP lvalue
+// factor → STAR factor
+// factor → NEW INT LBRACK expr RBRACK
+// lvalue → ID
+// lvalue → STAR factor
+// lvalue → LPAREN lvalue RPAREN
 
 string typeExpr(Node *node) {
   if (node->name != "expr") return "";
