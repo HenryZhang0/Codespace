@@ -104,8 +104,10 @@ void typeStatement(Node *node);
 void typeStatements(Node *node);
 void typeDcls(Node *node);
 string typeDcl(Node *node);
-
-
+string typeLvalue(Node *node);
+// factor → AMP lvalue
+// factor → STAR factor
+// factor → NEW INT LBRACK expr RBRACK
 string typeFactor(Node *node) {
   if (node->name != "factor") return "";
   Node *factor;
@@ -131,8 +133,8 @@ string typeFactor(Node *node) {
       cerr << "ERROR: unknown factor type" << factor->name << endl;
       exitt();
     }
-  } else if (node->children.size() == 2) { // PROBLEM
-    if (node->children[0]->name == "STAR") {
+  } else if (node->children.size() == 2) { 
+    if (node->children[0]->name == "STAR") { // STAR factor
       string type = typeFactor(node->children[1]);
       // remove the star in type
       string star = type.substr(type.length() - 1, 1);
@@ -143,6 +145,18 @@ string typeFactor(Node *node) {
       }
       node->type = newType;
       return newType;
+    } else if (node->children[0]->name == "AMP") { // AMP lvalue
+      string type = typeLvalue(node->children[1]);
+      node->type = type + "*";
+      return type + "*";
+    } else if (node->children[0]->name == "NEW") {
+      string type = typeFactor(node->children[3]);
+      if (type != "int") {
+        cerr << "ERROR: expr is not an int" << endl;
+        exitt();
+      }
+      node->type = "int*";
+      return "int*";
     }
     // factor = node->children[1];
     // string type = typeFactor(factor);
@@ -212,12 +226,6 @@ string typeTerm(Node *node) {
 // term → term STAR factor
 // term → term SLASH factor
 // term → term PCT factor
-// factor → AMP lvalue
-// factor → STAR factor
-// factor → NEW INT LBRACK expr RBRACK
-// lvalue → ID
-// lvalue → STAR factor
-// lvalue → LPAREN lvalue RPAREN
 
 string typeExpr(Node *node) {
   if (node->name != "expr") return "";
@@ -325,7 +333,9 @@ void typeDcls (Node *node) {
 
   }
 }
-
+// lvalue → ID
+// lvalue → STAR factor
+// lvalue → LPAREN lvalue RPAREN
 string typeLvalue(Node *node) {
   if (node->name != "lvalue") return "";
   if (node->children.size() == 1) {
@@ -334,8 +344,17 @@ string typeLvalue(Node *node) {
     node->type = type;
     id->type = type;
     return type;
-  } else if (node->children.size() == 2) {
-  
+  } else if (node->children.size() == 2) { // STAR factor
+    Node *factor = node->children[1];
+    string type = typeFactor(factor);  
+    string star = type.substr(type.length() - 1, 1);
+    string newType = type.substr(0, type.length() - 1);
+    if (star != "*") {
+      cerr << "ERROR: factor is not an int*" << endl;
+      exitt();
+    }
+    node->type = newType;
+    return newType;
   } else if (node->children.size() == 3) {
     return typeLvalue(node->children[1]);
   }
