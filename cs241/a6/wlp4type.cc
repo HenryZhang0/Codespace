@@ -2,9 +2,8 @@
 #include <iostream>
 #include <vector>
 #include <sstream>
-
+#include <unordered_map>
 using namespace std;
-
 
 struct Node {
   std::string name;
@@ -15,6 +14,10 @@ struct Node {
   std::vector<Node*> children;
 };
 Node *root;
+bool doneDeclarations = false;
+// symbol table
+unordered_map<string, string> symbolTable;
+
 void deleteNode(Node *node) {
   for (int i = 0; i < node->children.size(); i++) {
     deleteNode(node->children[i]);
@@ -46,7 +49,6 @@ Node* scan(Node *parent) {
   if (!getline(cin, s)) {
     return NULL;
   }
-  // cout << "HERE" << endl;
 
  
   istringstream iss(s);
@@ -98,20 +100,11 @@ void printNode(Node *node) {
 string typeExpr(Node *node);
 string typeFactor(Node *node);
 string typeTerm(Node *node);
+void typeStatement(Node *node);
+void typeStatements(Node *node);
+void typeDcls(Node *node);
+string typeDcl(Node *node);
 
-void typeDcl(Node *node) {
-  if (node->name != "dcl") return;
-  Node *type = node->children[0];
-  Node *id = node->children[1];
-  if (type->children.size() == 1) {
-    id->type = "int";
-  } else if (type->children.size() == 2) {
-    id->type = "int*";
-  } else {
-    cerr << "ERROR: unknown type" << endl;
-    exitt();
-  }
-}
 
 string typeFactor(Node *node) {
   if (node->name != "factor") return "";
@@ -123,10 +116,10 @@ string typeFactor(Node *node) {
 
     factor = node->children[0];
     if (factor->name == "ID") {
-      // id = factor->children[0];
-      // node->type = id->type;
-      // return id->type;
-      return "temp";
+      string type = symbolTable[factor->lexeme];
+      factor->type = type;
+      node->type = type;
+      return type;
     } else if (factor->name == "NUM") {
       node->type = "int";
       factor->type = "int";
@@ -182,6 +175,7 @@ string typeFactor(Node *node) {
   //   return "int";
   // }
 }
+
 string typeTerm(Node *node) {
   if (node->name != "term") return "";
   Node *factor;
@@ -231,7 +225,14 @@ void checkMain(Node *node) {
   // find child with name "statement"
   Node *param1 = node->children[3];
   Node *param2 = node->children[5];
+  Node *declarations = node->children[8];
+  Node *statements = node->children[9];
   Node *returnExpr = node->children[11];
+  typeDcl(param1);
+  typeDcl(param2);
+  typeDcls(declarations);
+  typeStatements(statements);
+  typeExpr(returnExpr);
   if (param1->children[1]->lexeme == param2->children[1]->lexeme) {
     cerr << "ERROR: wain params have same name " << param1->lexeme << " " << param2->lexeme << endl; 
     exitt();
@@ -247,10 +248,109 @@ void checkMain(Node *node) {
   } 
 }
 
+string typeDcl(Node *node) {
+  if (node->name != "dcl") return "";
+  Node *type = node->children[0];
+  Node *id = node->children[1];
+  if (type->children.size() == 1) {
+    id->type = "int";
+    symbolTable[id->lexeme] = "int";
+    return "int";
+  } else if (type->children.size() == 2) {
+    id->type = "int*";
+    symbolTable[id->lexeme] = "int*";
+    return "int*";
+  } else {
+    cerr << "ERROR: unknown type" << endl;
+    exitt();
+  }
+  return "";
+}
+
+void typeDcls (Node *node) {
+  if (node->name != "dcls") return;
+  if (node->rule == "dcls .EMPTY") {
+    return;
+  } else {
+    Node *dcls = node->children[0];
+    typeDcls(dcls);
+    Node *dcl = node->children[1];
+    string dcl_type = typeDcl(dcl);
+
+
+    Node *rvalue = node->children[3];
+    if (rvalue->name == "NUM") {
+      rvalue->type = "int";
+    } else if (rvalue->name == "NULL") {
+      rvalue->type = "int*";
+    }
+    
+    string lvaluetype = dcl_type; // tdb
+    string rvaluetype = rvalue->type;
+
+    if ((lvaluetype == rvaluetype)) {
+
+    } else {
+      cerr << "!ERROR: lvalue and rvalue do not match: " << lvaluetype << " " << rvaluetype << endl;
+      exitt();
+    }
+
+  }
+}
+
+string typeLvalue(Node *node) {
+  if (node->name != "lvalue") return "";
+  if (node->children.size() == 1) {
+    Node *id = node->children[0];
+    string type = symbolTable[id->lexeme];
+    node->type = type;
+    id->type = type;
+    return type;
+  } else if (node->children.size() == 2) {
+  
+  } else if (node->children.size() == 3) {
+    return typeLvalue(node->children[1]);
+  }
+  return "";
+}
+
+void typeStatement(Node *node) {
+  Node *state = node->children[0];
+  if (state->name == "lvalue") {
+    string type = typeLvalue(state);
+    string rvalue = typeExpr(node->children[2]);
+    if (type != rvalue) {
+      cerr << "ERROR: lvalue and rvalue do not match: " << type << ", " << rvalue << endl;
+      exitt();
+    }
+  } else {
+    if (state->name == "IF") {
+      typeStatements(state->children[5]);
+      typeStatements(state->children[9]);
+    } else if (state->name == "WHILE") {
+      typeStatements(state->children[5]);
+    } else if (state->name == "PRINTLN") {
+      typeExpr(state->children[2]);
+    } else if (state->name == "DELETE") {
+      typeExpr(state->children[3]);
+    }
+  }
+}
+
+void typeStatements(Node *node) {
+  if (node->name != "statements") return;
+  if (node->rule == "statements .EMPTY") {
+    return;
+  } else {
+    typeStatements(node->children[0]);
+    Node *statement = node->children[1];
+    typeStatement(statement);
+  }
+}
 
 void traverse(Node *node) {
   checkMain(node);
-  typeDcl(node);
+  // typeStatements(node);
   for (int i = 0; i < node->children.size(); i++) {
     traverse(node->children[i]);
   }
@@ -261,7 +361,11 @@ int main() {
   root = scan(NULL);
   traverse(root);
   printNode(root);
-
+  // print symbol table
+  // for (auto it = symbolTable.begin(); it != symbolTable.end(); it++) {
+  //   cout << it->first << " " << it->second << endl;
+  // }
+  
   deleteNode(root);
   return 0;
 }

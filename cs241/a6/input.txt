@@ -8,17 +8,51 @@ LPAREN (
 dcl type ID
 type INT
 INT int
-ID b
+ID x
 COMMA ,
+dcl type ID
+type INT
+INT int
+ID y
+RPAREN )
+LBRACE {
+dcls dcls dcl BECOMES NUM SEMI
+dcls dcls dcl BECOMES NUM SEMI
+dcls dcls dcl BECOMES NULL SEMI
+dcls .EMPTY
 dcl type ID
 type INT STAR
 INT int
 STAR *
 ID a
-RPAREN )
-LBRACE {
-dcls .EMPTY
+BECOMES =
+NULL NULL
+SEMI ;
+dcl type ID
+type INT
+INT int
+ID b
+BECOMES =
+NUM 1
+SEMI ;
+dcl type ID
+type INT
+INT int
+ID c
+BECOMES =
+NUM 0
+SEMI ;
+statements statements statement
 statements .EMPTY
+statement lvalue BECOMES expr SEMI
+lvalue ID
+ID c
+BECOMES =
+expr term
+term factor
+factor ID
+ID b
+SEMI ;
 RETURN return
 expr term
 term factor
