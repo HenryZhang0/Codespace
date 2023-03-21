@@ -25,7 +25,7 @@ factor STAR factor : int
 STAR *
 factor AMP lvalue : int*
 AMP &
-lvalue LPAREN lvalue RPAREN
+lvalue LPAREN lvalue RPAREN : int
 LPAREN (
 lvalue STAR factor : int
 STAR *

@@ -248,7 +248,7 @@ string typeExpr(Node *node) {
     } else if (type1 == "int" && type2 == "int*" && op == "PLUS") {
       node->type = "int*";
       return "int*";
-    } else if (type1 == "int*" && type2 == "int*") {
+    } else if (type1 == "int*" && type2 == "int*" && op == "MINUS") {
       node->type = "int";
       return "int";
     } else {
@@ -366,7 +366,9 @@ string typeLvalue(Node *node) {
     node->type = newType;
     return newType;
   } else if (node->children.size() == 3) {
-    return typeLvalue(node->children[1]);
+    string type = typeLvalue(node->children[1]);
+    node->type = type;
+    return type;
   }
   return "";
 }
