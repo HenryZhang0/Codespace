@@ -3,45 +3,14 @@ BOF BOF
 procedures procedure procedures
 procedure INT ID LPAREN params RPAREN LBRACE dcls statements RETURN expr SEMI RBRACE
 INT int
-ID p
-LPAREN (
-params .EMPTY
-RPAREN )
-LBRACE {
-dcls .EMPTY
-statements .EMPTY
-RETURN return
-expr term
-term factor
-factor NUM
-NUM 241
-SEMI ;
-RBRACE }
-procedures procedure procedures
-procedure INT ID LPAREN params RPAREN LBRACE dcls statements RETURN expr SEMI RBRACE
-INT int
-ID q
-LPAREN (
-params .EMPTY
-RPAREN )
-LBRACE {
-dcls .EMPTY
-statements .EMPTY
-RETURN return
-expr term
-term factor
-factor ID LPAREN RPAREN
-ID p
-LPAREN (
-RPAREN )
-SEMI ;
-RBRACE }
-procedures procedure procedures
-procedure INT ID LPAREN params RPAREN LBRACE dcls statements RETURN expr SEMI RBRACE
-INT int
 ID r
 LPAREN (
-params .EMPTY
+params paramlist
+paramlist dcl
+dcl type ID
+type INT
+INT int
+ID a
 RPAREN )
 LBRACE {
 dcls .EMPTY
@@ -49,10 +18,8 @@ statements .EMPTY
 RETURN return
 expr term
 term factor
-factor ID LPAREN RPAREN
-ID q
-LPAREN (
-RPAREN )
+factor ID
+ID a
 SEMI ;
 RBRACE }
 procedures main
@@ -61,8 +28,9 @@ INT int
 WAIN wain
 LPAREN (
 dcl type ID
-type INT
+type INT STAR
 INT int
+STAR *
 ID a
 COMMA ,
 dcl type ID
@@ -76,9 +44,14 @@ statements .EMPTY
 RETURN return
 expr term
 term factor
-factor ID LPAREN RPAREN
+factor ID LPAREN arglist RPAREN
 ID r
 LPAREN (
+arglist expr
+expr term
+term factor
+factor ID
+ID a
 RPAREN )
 SEMI ;
 RBRACE }

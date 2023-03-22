@@ -113,6 +113,7 @@ void typeStatements(Node *node);
 void typeDcls(Node *node);
 string typeDcl(Node *node);
 string typeLvalue(Node *node);
+vector<string> typeArglist(Node *node);
 // factor → AMP lvalue
 // factor → STAR factor
 // factor → NEW INT LBRACK expr RBRACK
@@ -142,7 +143,7 @@ string typeFactor(Node *node) {
   Node *num;
   string type;
   if (node->rule == "factor ID") {
-    type = functionTable[currentFunction].symbolTable[factor->lexeme];
+    type = typeId(node->children[0]);
     node->children[0]->type = type;
   } else if (node->rule == "factor NUM") {
     type = "int";
@@ -170,7 +171,22 @@ string typeFactor(Node *node) {
     type = typeFunctionCall(node->children[0]);
   } else if (node->rule == "factor ID LPAREN arglist RPAREN") {
     Node *arglist = node->children[2];
-    // string type = symbolTable[node->children[0]->lexeme];
+    vector <string> argTypes;
+    for (int i = 0; i < arglist->children.size(); i++) {
+      argTypes.push_back(typeExpr(arglist->children[i]));
+    }
+    type = typeFunctionCall(node->children[0]);
+  
+    if (argTypes.size() != functionTable[node->children[0]->lexeme].params.size()) {
+      cerr << "ERROR: arglist does not match function declaration" << endl;
+      exitt();
+    }
+    for (int i = 0; i < argTypes.size(); i++) {
+      if (argTypes[i] != functionTable[node->children[0]->lexeme].params[i]) {
+        cerr << "ERROR: arglist does not match function declaration" << endl;
+        exitt();
+      }
+    }
   } else if (node->rule ==  "factor NEW INT LBRACK expr RBRACK") {
     type = typeExpr(node->children[3]);
     if (type != "int") {
@@ -270,21 +286,24 @@ void checkMain(Node *node) {
   } 
 }
 
-void typeParamlist(Node *node) {
+vector<string> typeParamlist(Node *node, bool declare = false) {
   string paramType = typeDcl(node->children[0]);
-  functionTable[currentFunction].params.push_back(paramType);
-  if (node->rule == "paramlist dcl COMMA paramlist") {
-    typeParamlist(node->children[2]);
+  if (declare) {
+    functionTable[currentFunction].symbolTable[node->children[0]->children[1]->lexeme] = paramType;
   }
+  vector<string> p1;
+  if (node->rule == "paramlist dcl COMMA paramlist") {
+    vector<string> p2 = typeParamlist(node->children[2]);
+    p1.insert(p1.end(), p2.begin(), p2.end());
+  }
+  return p1;
 }
 
-void typeParams(Node *node) {
-  if (node->name != "params") return;
+vector<string> typeParams(Node *node, bool declare = false) {
   if (node->rule == "params paramlist") {
-    typeParamlist(node->children[0]);
-  } else {
-    return;
+    return typeParamlist(node->children[0], declare);
   }
+  return vector<string>();
 }
 
 void typeProcedure(Node *node) {
@@ -300,7 +319,7 @@ void typeProcedure(Node *node) {
   functionTable[name].name = name;
 
   Node *params = node->children[3];
-  typeParams(params);
+  functionTable[name].params = typeParams(params, true);
 
   Node *declarations = node->children[6];
   typeDcls(declarations);
@@ -383,6 +402,10 @@ string typeLvalue(Node *node) {
   if (node->name != "lvalue") return "not lvalue";
   if (node->children.size() == 1) {
     Node *id = node->children[0];
+    if (functionTable[currentFunction].symbolTable.find(id->lexeme) == functionTable[currentFunction].symbolTable.end()) {
+      cerr << "ERROR: variable " << id->lexeme << " not declared" << endl;
+      exitt();
+    }
     string type = functionTable[currentFunction].symbolTable[id->lexeme];
     node->type = type;
     id->type = type;
@@ -442,11 +465,6 @@ void typeStatements(Node *node) {
 
 void traverse(Node *node) {
   typeProcedures(node->children[1]);
-  // checkMain(node);
-  // typeStatements(node);
-  // for (int i = 0; i < node->children.size(); i++) {
-  //   traverse(node->children[i]);
-  // }
 }
 
 
@@ -455,5 +473,15 @@ int main() {
   traverse(root);
   printNode(root);
   deleteNode(root);
+
+  // print function table
+  // for (auto it = functionTable.begin(); it != functionTable.end(); it++) {
+  //   cout << "function: " << it->first << endl;
+  //   cout << "return type: " << it->second.returnType << endl;
+  //   cout << "symbol table: " << endl;
+  //   for (auto it2 = it->second.symbolTable.begin(); it2 != it->second.symbolTable.end(); it2++) {
+  //     cout << it2->first << " " << it2->second << endl;
+  //   }
+  // }
   return 0;
 }
