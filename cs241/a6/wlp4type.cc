@@ -132,7 +132,6 @@ string typeFunctionCall(Node *node) {
     exitt();
   }
   Procedure proc = functionTable[node->lexeme];
-  node->type = proc.returnType;
   return proc.returnType;
 }
 
