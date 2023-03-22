@@ -171,23 +171,14 @@ string typeFactor(Node *node) {
     type = typeFunctionCall(node->children[0]);
   } else if (node->rule == "factor ID LPAREN arglist RPAREN") {
     Node *arglist = node->children[2];
-    vector <string> argTypes;
-    for (int i = 0; i < arglist->children.size(); i++) {
-      type = typeExpr(arglist->children[i]);
-      argTypes.push_back(type);
-    }
     type = typeFunctionCall(node->children[0]);
   
-    if (argTypes.size() != functionTable[node->children[0]->lexeme].params.size()) {
-      cerr << "ERROR: arglist does not match function declaration" << endl;
-      // destruct argTypes
-      for (int i = 0; i < argTypes.size(); i++) {
-        argTypes.pop_back();
-      }
+    if (arglist->children.size() != functionTable[node->children[0]->lexeme].params.size()) {
+      cerr << "ERROR: wrong number of args" << endl;
       exitt();
     }
-    for (int i = 0; i < argTypes.size(); i++) {
-      if (argTypes[i] != functionTable[node->children[0]->lexeme].params[i]) {
+    for (int i = 0; i < arglist->children.size(); i++) {
+      if (arglist->children[i]->type != functionTable[node->children[0]->lexeme].params[i]) {
         cerr << "ERROR: arglist does not match function declaration" << endl;
         exitt();
       }
