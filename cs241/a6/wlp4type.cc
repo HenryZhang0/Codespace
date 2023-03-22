@@ -16,7 +16,15 @@ struct Node {
 Node *root;
 bool doneDeclarations = false;
 // symbol table
-unordered_map<string, string> symbolTable;
+
+struct Procedure {
+  string name;
+  vector<string> params;
+  string returnType;
+  unordered_map<string, string> symbolTable;
+};
+unordered_map<string, Procedure> functionTable;
+string currentFunction;
 
 void deleteNode(Node *node) {
   for (int i = 0; i < node->children.size(); i++) {
@@ -85,7 +93,7 @@ Node* findChild(Node *node, string name) {
 
 void printNode(Node *node) {
   cout << node->rule;
-  if (node->lexeme != "") {
+  if (node->lexeme != "!") {
     // cout << " " << node->lexeme;
   }
   if (node->type != "") {
@@ -108,101 +116,75 @@ string typeLvalue(Node *node);
 // factor → AMP lvalue
 // factor → STAR factor
 // factor → NEW INT LBRACK expr RBRACK
+string typeId(Node *node) {
+  if (functionTable[currentFunction].symbolTable.find(node->lexeme) == functionTable[currentFunction].symbolTable.end()) {
+    cerr << "ERROR: undeclared variable " << node->lexeme << endl;
+    exitt();
+  }
+  string type = functionTable[currentFunction].symbolTable[node->lexeme];
+  node->type = type;
+  return type;
+}
+
+string typeFunctionCall(Node *node) {
+  if (functionTable.find(node->lexeme) == functionTable.end()) {
+    cerr << "ERROR: undeclared function " << node->lexeme << endl;
+    exitt();
+  }
+  Procedure proc = functionTable[node->lexeme];
+  node->type = proc.returnType;
+  return proc.returnType;
+}
+
 string typeFactor(Node *node) {
-  if (node->name != "factor") return "";
   Node *factor;
   Node *expr;
   Node *id;
   Node *num;
-  if (node->children.size() == 1) {
-
-    factor = node->children[0];
-    if (factor->name == "ID") {
-      string type = symbolTable[factor->lexeme];
-      factor->type = type;
-      node->type = type;
-      return type;
-    } else if (factor->name == "NUM") {
-      node->type = "int";
-      factor->type = "int";
-      return "int";
-    } else if (factor->name == "NULL") {
-      node->type = "int*";
-      factor->type = "int*";
-      return "int*";
-    } else {
-      cerr << "ERROR: unknown factor type" << factor->name << endl;
+  string type;
+  if (node->rule == "factor ID") {
+    type = functionTable[currentFunction].symbolTable[factor->lexeme];
+    node->children[0]->type = type;
+  } else if (node->rule == "factor NUM") {
+    type = "int";
+    node->children[0]->type = type;
+  } else if (node->rule == "factor NULL") {
+    type = "int*";
+    node->children[0]->type = type;
+  } else if (node->rule == "factor STAR factor") {
+    type = typeFactor(node->children[1]);
+    if (type != "int*") {
+      cerr << "ERROR: factor is not an int*" << endl;
       exitt();
     }
-  } else if (node->children.size() == 2) { 
-    if (node->children[0]->name == "STAR") { // STAR factor
-      string type = typeFactor(node->children[1]);
-      // remove the star in type
-      string star = type.substr(type.length() - 1, 1);
-      string newType = type.substr(0, type.length() - 1);
-      if (star != "*") {
-        cerr << "ERROR: factor is not an int*" << endl;
-        exitt();
-      }
-      node->type = newType;
-      return newType;
-    } else if (node->children[0]->name == "AMP") { // AMP lvalue
-      string type = typeLvalue(node->children[1]);
-      node->type = type + "*";
-      return type + "*";
+    type = "int";
+  } else if (node->rule == "factor AMP lvalue") {
+    type = typeLvalue(node->children[1]);
+    if (type != "int") {
+      cerr << "ERROR: lvalue is not an int" << endl;
+      exitt();
     }
-    // factor = node->children[1];
-    // string type = typeFactor(factor);
-    // if (type != "int*") {
-    //   cerr << "ERROR: factor is not an int*" << endl;
-    //   exitt();
-    // }
-    // node->type = "int";
-    return "int";
-  } else if (node->children.size() == 3) {
-    if (node->children[0]->name == "LPAREN") {
-      expr = node->children[1];
-      string type = typeExpr(expr);
-      node->type = type;
-      return type;
-    } 
-    
-    return "int";
-  } else if (node->children.size() == 4) {
-    return "int";
-  } else if (node->children.size() == 5) { // NEW INT LBRACK expr RBRACK
-      string type = typeExpr(node->children[3]);
-      if (type != "int") {
-        cerr << "ERROR: expr is not an int" << endl;
-        exitt();
-      }
-      node->type = "int*";
-      return "int*";
+    type = type + "*";
+  } else if (node->children[0]->name == "factor LPAREN expr RPAREN") {
+    type = typeExpr(node->children[1]);
+  } else if (node->rule == "factor ID LPAREN RPAREN") {
+    type = typeFunctionCall(node->children[0]);
+  } else if (node->rule == "factor ID LPAREN arglist RPAREN") {
+    Node *arglist = node->children[2];
+    // string type = symbolTable[node->children[0]->lexeme];
+  } else if (node->rule ==  "factor NEW INT LBRACK expr RBRACK") {
+    type = typeExpr(node->children[3]);
+    if (type != "int") {
+      cerr << "ERROR: expr is not an int" << endl;
+      exitt();
+    }
   }
-  return "";
-  // else if (node->children.size() == 2) {
-  //   factor = node->children[1];
-  //   string type = typeFactor(factor);
-  //   if (type != "int*") {
-  //     cerr << "ERROR: factor is not an int*" << endl;
-  //     exitt();
-  //   }
-  //   node->type = "int";
-  //   return "int";
-  // } else {
-  //   expr = node->children[1];
-  //   string type = typeExpr(expr);
-  //   if (type != "int") {
-  //     cerr << "ERROR: expr is not an int" << endl;
-  //     exitt();
-  //   }
-  //   node->type = "int";
-  //   return "int";
-  // }
+  node->type = type;
+  return type;
 }
 
 string typeTerm(Node *node) {
-  if (node->name != "term") return "";
+  if (node->name != "term") return "not term";
   Node *factor;
   Node *term;
   if (node->children.size() == 1) {
@@ -220,14 +202,9 @@ string typeTerm(Node *node) {
   }
   
 }
-// expr → expr PLUS term
-// expr → expr MINUS term
-// term → term STAR factor
-// term → term SLASH factor
-// term → term PCT factor
 
 string typeExpr(Node *node) {
-  if (node->name != "expr") return "";
+  if (node->name != "expr") return "not expr";
   Node *term;
   Node *oper;
   Node *expr;
@@ -264,10 +241,11 @@ string typeExpr(Node *node) {
   }
 }
 
-
 void checkMain(Node *node) {
   if (node->name != "main")  return;
-  // find child with name "statement"
+  currentFunction = "wain";
+  functionTable[currentFunction].name = "wain";
+
   Node *param1 = node->children[3];
   Node *param2 = node->children[5];
   Node *declarations = node->children[8];
@@ -293,28 +271,85 @@ void checkMain(Node *node) {
   } 
 }
 
+void typeParamlist(Node *node) {
+  string paramType = typeDcl(node->children[0]);
+  functionTable[currentFunction].params.push_back(paramType);
+  if (node->rule == "paramlist dcl COMMA paramlist") {
+    typeParamlist(node->children[2]);
+  }
+}
+
+void typeParams(Node *node) {
+  if (node->name != "params") return;
+  if (node->rule == "params paramlist") {
+    typeParamlist(node->children[0]);
+  } else {
+    return;
+  }
+}
+
+void typeProcedure(Node *node) {
+  if (node->name != "procedure") return;
+  // add to procedure table
+  string name = node->children[1]->lexeme;
+  if (functionTable.find(name) != functionTable.end()) {
+    cerr << "ERROR: procedure " << name << " already declared" << endl;
+    exitt();
+  }
+  currentFunction = name;
+  functionTable[name] = Procedure();
+  functionTable[name].name = name;
+
+  Node *params = node->children[3];
+  typeParams(params);
+
+  Node *declarations = node->children[6];
+  typeDcls(declarations);
+  
+  Node *statements = node->children[7];
+  typeStatements(statements);
+  
+  Node *returnExpr = node->children[9];
+  typeExpr(returnExpr);
+  string returnType = typeExpr(returnExpr);
+  functionTable[name].returnType = returnType;
+}
+
+void typeProcedures(Node *node) {
+  if (node->name != "procedures") cout << "ERROR: not a procedure" << endl;
+  if (node->rule == "procedures procedure procedures") {
+    typeProcedure(node->children[0]);
+    typeProcedures(node->children[1]);
+  } else if (node->rule == "procedures main") {
+    checkMain(node->children[0]);
+  }
+  return;
+}
+
 string typeDcl(Node *node) {
-  if (node->name != "dcl") return "";
+  if (node->name != "dcl") return "not dcl";
   Node *type = node->children[0];
   Node *id = node->children[1];
   // if already in symbol table, error
-  if (symbolTable.find(id->lexeme) != symbolTable.end()) {
+  if (functionTable[currentFunction].symbolTable.find(id->lexeme) != functionTable[currentFunction].symbolTable.end()) {
     cerr << "ERROR: duplicate variable " << id->lexeme << endl;
     exitt();
   }
+
   if (type->children.size() == 1) {
+    functionTable[currentFunction].symbolTable[id->lexeme] = "int";
     id->type = "int";
-    symbolTable[id->lexeme] = "int";
+
     return "int";
   } else if (type->children.size() == 2) {
     id->type = "int*";
-    symbolTable[id->lexeme] = "int*";
+    functionTable[currentFunction].symbolTable[id->lexeme] = "int*";
     return "int*";
   } else {
     cerr << "ERROR: unknown type" << endl;
     exitt();
+    return "unknown dcl";
   }
-  return "";
 }
 
 void typeDcls (Node *node) {
@@ -326,15 +361,13 @@ void typeDcls (Node *node) {
     typeDcls(dcls);
     Node *dcl = node->children[1];
     string dcl_type = typeDcl(dcl);
-
-
     Node *rvalue = node->children[3];
     if (rvalue->name == "NUM") {
       rvalue->type = "int";
     } else if (rvalue->name == "NULL") {
       rvalue->type = "int*";
     }
-    
+
     string lvaluetype = dcl_type; // tdb
     string rvaluetype = rvalue->type;
 
@@ -344,17 +377,14 @@ void typeDcls (Node *node) {
       cerr << "!ERROR: lvalue and rvalue do not match: " << lvaluetype << " " << rvaluetype << endl;
       exitt();
     }
-
   }
 }
-// lvalue → ID
-// lvalue → STAR factor
-// lvalue → LPAREN lvalue RPAREN
+
 string typeLvalue(Node *node) {
-  if (node->name != "lvalue") return "";
+  if (node->name != "lvalue") return "not lvalue";
   if (node->children.size() == 1) {
     Node *id = node->children[0];
-    string type = symbolTable[id->lexeme];
+    string type = functionTable[currentFunction].symbolTable[id->lexeme];
     node->type = type;
     id->type = type;
     return type;
@@ -374,7 +404,7 @@ string typeLvalue(Node *node) {
     node->type = type;
     return type;
   }
-  return "";
+  return "unknown lvalue";
 }
 
 void typeStatement(Node *node) {
@@ -412,11 +442,12 @@ void typeStatements(Node *node) {
 }
 
 void traverse(Node *node) {
-  checkMain(node);
+  typeProcedures(node->children[1]);
+  // checkMain(node);
   // typeStatements(node);
-  for (int i = 0; i < node->children.size(); i++) {
-    traverse(node->children[i]);
-  }
+  // for (int i = 0; i < node->children.size(); i++) {
+  //   traverse(node->children[i]);
+  // }
 }
 
 
@@ -424,11 +455,6 @@ int main() {
   root = scan(NULL);
   traverse(root);
   printNode(root);
-  // print symbol table
-  // for (auto it = symbolTable.begin(); it != symbolTable.end(); it++) {
-  //   cout << it->first << " " << it->second << endl;
-  // }
-  
   deleteNode(root);
   return 0;
 }
