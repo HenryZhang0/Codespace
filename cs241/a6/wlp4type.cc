@@ -173,7 +173,8 @@ string typeFactor(Node *node) {
     Node *arglist = node->children[2];
     vector <string> argTypes;
     for (int i = 0; i < arglist->children.size(); i++) {
-      argTypes.push_back(typeExpr(arglist->children[i]));
+      type = typeExpr(arglist->children[i]);
+      argTypes.push_back(type);
     }
     type = typeFunctionCall(node->children[0]);
   
