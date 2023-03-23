@@ -113,7 +113,9 @@ void typeStatements(Node *node);
 void typeDcls(Node *node);
 string typeDcl(Node *node);
 string typeLvalue(Node *node);
+vector<string> typeParamlist(Node *node);
 vector<string> typeArglist(Node *node);
+
 // factor → AMP lvalue
 // factor → STAR factor
 // factor → NEW INT LBRACK expr RBRACK
@@ -172,8 +174,19 @@ string typeFactor(Node *node) {
   } else if (node->rule == "factor ID LPAREN arglist RPAREN") {
     Node *arglist = node->children[2];
     type = typeFunctionCall(node->children[0]);
-  
-    if (arglist->children.size() != functionTable[node->children[0]->lexeme].params.size()) {
+    vector<string> arglistTypes = typeArglist(arglist);
+
+    // print arglist types
+    for (int i = 0; i < arglistTypes.size(); i++) {
+      cout << arglistTypes[i] << endl;
+    }
+    // print function params
+    cout << "function params" << node->children[0]->lexeme << endl;
+    for (int i = 0; i < functionTable[node->children[0]->lexeme].params.size(); i++) {
+      cout << functionTable[node->children[0]->lexeme].params[i] << endl;
+    }
+
+    if (arglistTypes.size() != functionTable[node->children[0]->lexeme].params.size()) {
       cerr << "ERROR: wrong number of args" << endl;
       exitt();
     }
@@ -289,7 +302,7 @@ vector<string> typeParamlist(Node *node, bool declare = false) {
   }
   vector<string> p1;
   if (node->rule == "paramlist dcl COMMA paramlist") {
-    vector<string> p2 = typeParamlist(node->children[2]);
+    vector<string> p2 = typeParamlist(node->children[2], declare);
     p1.insert(p1.end(), p2.begin(), p2.end());
   }
   return p1;
@@ -301,6 +314,18 @@ vector<string> typeParams(Node *node, bool declare = false) {
   }
   return vector<string>();
 }
+
+vector<string> typeArglist(Node *node) {
+  vector<string> p1;
+  string paramType = typeExpr(node->children[0]);
+  p1.push_back(paramType);
+  if (node->rule == "arglist expr comma arglist") {
+    vector<string> p2 = typeArglist(node->children[2]);
+    p1.insert(p1.end(), p2.begin(), p2.end());
+  }
+  return p1;
+}
+
 
 void typeProcedure(Node *node) {
   if (node->name != "procedure") return;
@@ -462,7 +487,6 @@ void typeStatements(Node *node) {
 void traverse(Node *node) {
   typeProcedures(node->children[1]);
 }
-
 
 int main() {
   root = scan(NULL);
