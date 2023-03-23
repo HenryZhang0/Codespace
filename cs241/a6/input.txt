@@ -8,21 +8,13 @@ LPAREN (
 params .EMPTY
 RPAREN )
 LBRACE {
-dcls dcls dcl BECOMES NUM SEMI
 dcls .EMPTY
-dcl type ID
-type INT
-INT int
-ID a
-BECOMES =
-NUM 241
-SEMI ;
 statements .EMPTY
 RETURN return
 expr term
 term factor
-factor ID
-ID a
+factor NUM
+NUM 241
 SEMI ;
 RBRACE }
 procedures procedure procedures
@@ -33,15 +25,7 @@ LPAREN (
 params .EMPTY
 RPAREN )
 LBRACE {
-dcls dcls dcl BECOMES NUM SEMI
 dcls .EMPTY
-dcl type ID
-type INT
-INT int
-ID b
-BECOMES =
-NUM 241
-SEMI ;
 statements .EMPTY
 RETURN return
 expr term
@@ -60,31 +44,7 @@ LPAREN (
 params .EMPTY
 RPAREN )
 LBRACE {
-dcls dcls dcl BECOMES NUM SEMI
-dcls dcls dcl BECOMES NUM SEMI
-dcls dcls dcl BECOMES NUM SEMI
 dcls .EMPTY
-dcl type ID
-type INT
-INT int
-ID p
-BECOMES =
-NUM 200
-SEMI ;
-dcl type ID
-type INT
-INT int
-ID a
-BECOMES =
-NUM 40
-SEMI ;
-dcl type ID
-type INT
-INT int
-ID r
-BECOMES =
-NUM 1
-SEMI ;
 statements .EMPTY
 RETURN return
 expr term

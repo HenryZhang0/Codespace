@@ -441,13 +441,6 @@ string typeLvalue(Node *node) {
   return "unknown lvalue";
 }
 
-string typeTest(Node *node) {
-  string type;
-
-  node->type = type;
-  return type;
-}
-
 void typeStatement(Node *node) {
   Node *state = node->children[0];
   if (state->name == "lvalue") {
