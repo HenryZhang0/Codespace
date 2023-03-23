@@ -176,22 +176,12 @@ string typeFactor(Node *node) {
     type = typeFunctionCall(node->children[0]);
     vector<string> arglistTypes = typeArglist(arglist);
 
-    // print arglist types
-    for (int i = 0; i < arglistTypes.size(); i++) {
-      cout << arglistTypes[i] << endl;
-    }
-    // print function params
-    cout << "function params" << node->children[0]->lexeme << endl;
-    for (int i = 0; i < functionTable[node->children[0]->lexeme].params.size(); i++) {
-      cout << functionTable[node->children[0]->lexeme].params[i] << endl;
-    }
-
     if (arglistTypes.size() != functionTable[node->children[0]->lexeme].params.size()) {
       cerr << "ERROR: wrong number of args" << endl;
       exitt();
     }
-    for (int i = 0; i < arglist->children.size(); i++) {
-      if (arglist->children[i]->type != functionTable[node->children[0]->lexeme].params[i]) {
+    for (int i = 0; i < arglistTypes.size(); i++) {
+      if (arglistTypes[i] != functionTable[node->children[0]->lexeme].params[i]) {
         cerr << "ERROR: arglist does not match function declaration" << endl;
         exitt();
       }
@@ -297,6 +287,7 @@ void checkMain(Node *node) {
 
 vector<string> typeParamlist(Node *node, bool declare = false) {
   string paramType = typeDcl(node->children[0]);
+  functionTable[currentFunction].params.push_back(paramType);
   if (declare) {
     functionTable[currentFunction].symbolTable[node->children[0]->children[1]->lexeme] = paramType;
   }
@@ -319,7 +310,7 @@ vector<string> typeArglist(Node *node) {
   vector<string> p1;
   string paramType = typeExpr(node->children[0]);
   p1.push_back(paramType);
-  if (node->rule == "arglist expr comma arglist") {
+  if (node->rule == "arglist expr COMMA arglist") {
     vector<string> p2 = typeArglist(node->children[2]);
     p1.insert(p1.end(), p2.begin(), p2.end());
   }
@@ -340,7 +331,7 @@ void typeProcedure(Node *node) {
   functionTable[name].name = name;
 
   Node *params = node->children[3];
-  functionTable[name].params = typeParams(params, true);
+  typeParams(params, true);
 
   Node *declarations = node->children[6];
   typeDcls(declarations);
@@ -494,10 +485,13 @@ int main() {
   printNode(root);
   deleteNode(root);
 
-  // print function table
+  // // print function table
   // for (auto it = functionTable.begin(); it != functionTable.end(); it++) {
   //   cout << "function: " << it->first << endl;
   //   cout << "return type: " << it->second.returnType << endl;
+  //   cout << "number of params: " <<  it->second.params.size() << endl;
+  //   // print it->second.params
+
   //   cout << "symbol table: " << endl;
   //   for (auto it2 = it->second.symbolTable.begin(); it2 != it->second.symbolTable.end(); it2++) {
   //     cout << it2->first << " " << it2->second << endl;
