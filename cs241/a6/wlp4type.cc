@@ -174,6 +174,7 @@ string typeFactor(Node *node) {
   } else if (node->rule == "factor ID LPAREN arglist RPAREN") {
     Node *arglist = node->children[2];
     type = typeFunctionCall(node->children[0]);
+    cout << "type: " << type << endl;
     vector<string> arglistTypes = typeArglist(arglist);
 
     if (arglistTypes.size() != functionTable[node->children[0]->lexeme].params.size()) {
@@ -339,10 +340,9 @@ void typeProcedure(Node *node) {
   Node *statements = node->children[7];
   typeStatements(statements);
   
+  functionTable[name].returnType = "int";
   Node *returnExpr = node->children[9];
-  typeExpr(returnExpr);
   string returnType = typeExpr(returnExpr);
-  functionTable[name].returnType = returnType;
 }
 
 void typeProcedures(Node *node) {
@@ -497,20 +497,20 @@ int main() {
     printNode(root);
     deleteNode(root);
   } catch (int e) {
+  for (auto it = functionTable.begin(); it != functionTable.end(); it++) {
+    cout << "function: " << it->first << endl;
+    cout << "  return type: " << it->second.returnType << endl;
+    cout << "  number of params: " <<  it->second.params.size() << endl;
+    // print it->second.params
+
+    cout << "  symbol table: " << endl;
+    for (auto it2 = it->second.symbolTable.begin(); it2 != it->second.symbolTable.end(); it2++) {
+      cout << "    " << it2->first << " " << it2->second << endl;
+    }
+  }
     
   }
 
   // // print function table
-  // for (auto it = functionTable.begin(); it != functionTable.end(); it++) {
-  //   cout << "function: " << it->first << endl;
-  //   cout << "return type: " << it->second.returnType << endl;
-  //   cout << "number of params: " <<  it->second.params.size() << endl;
-  //   // print it->second.params
-
-  //   cout << "symbol table: " << endl;
-  //   for (auto it2 = it->second.symbolTable.begin(); it2 != it->second.symbolTable.end(); it2++) {
-  //     cout << it2->first << " " << it2->second << endl;
-  //   }
-  // }
   return 0;
 }
