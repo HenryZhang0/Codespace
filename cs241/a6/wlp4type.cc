@@ -464,17 +464,17 @@ void typeStatement(Node *node) {
       cerr << "ERROR: lvalue and rvalue do not match: " << type << ", " << rvalue << endl;
       exitt();
     }
-  } else if (state->rule == "statement IF LPAREN test RPAREN LBRACE statements RBRACE ELSE LBRACE statements RBRACE") {
-    typeTest(state->children[2]);
-    typeStatements(state->children[5]);
-    typeStatements(state->children[9]);
-  } else if (state->rule == "statement WHILE LPAREN test RPAREN LBRACE statements RBRACE") {
-    typeTest(state->children[2]);
-    typeStatements(state->children[5]);
+  } else if (node->rule == "statement IF LPAREN test RPAREN LBRACE statements RBRACE ELSE LBRACE statements RBRACE") {
+    typeTest(node->children[2]);
+    typeStatements(node->children[5]);
+    typeStatements(node->children[9]);
+  } else if (node->rule == "statement WHILE LPAREN test RPAREN LBRACE statements RBRACE") {
+    typeTest(node->children[2]);
+    typeStatements(node->children[5]);
   } else if (state->name == "PRINTLN") {
-    typeExpr(state->children[2]);
+    typeExpr(node->children[2]);
   } else if (state->name == "DELETE") {
-    typeExpr(state->children[3]);
+    typeExpr(node->children[3]);
   }
 }
 

@@ -1,30 +1,14 @@
 start BOF procedures EOF
 BOF BOF
-procedures procedure procedures
-procedure INT ID LPAREN params RPAREN LBRACE dcls statements RETURN expr SEMI RBRACE
-INT int
-ID f
-LPAREN (
-params .EMPTY
-RPAREN )
-LBRACE {
-dcls .EMPTY
-statements .EMPTY
-RETURN return
-expr term
-term factor
-factor NULL
-NULL NULL
-SEMI ;
-RBRACE }
 procedures main
 main INT WAIN LPAREN dcl COMMA dcl RPAREN LBRACE dcls statements RETURN expr SEMI RBRACE
 INT int
 WAIN wain
 LPAREN (
 dcl type ID
-type INT
+type INT STAR
 INT int
+STAR *
 ID a
 COMMA ,
 dcl type ID
@@ -34,14 +18,52 @@ ID b
 RPAREN )
 LBRACE {
 dcls .EMPTY
+statements statements statement
+statements statements statement
+statements statements statement
+statements statements statement
 statements .EMPTY
+statement lvalue BECOMES expr SEMI
+lvalue ID
+ID a
+BECOMES =
+expr term
+term factor
+factor NULL
+NULL NULL
+SEMI ;
+statement lvalue BECOMES expr SEMI
+lvalue ID
+ID b
+BECOMES =
+expr term
+term factor
+factor NUM
+NUM 241
+SEMI ;
+statement PRINTLN LPAREN expr RPAREN SEMI
+PRINTLN println
+LPAREN (
+expr term
+term factor
+factor ID
+ID b
+RPAREN )
+SEMI ;
+statement DELETE LBRACK RBRACK expr SEMI
+DELETE delete
+LBRACK [
+RBRACK ]
+expr term
+term factor
+factor ID
+ID a
+SEMI ;
 RETURN return
 expr term
 term factor
-factor ID LPAREN RPAREN
-ID f
-LPAREN (
-RPAREN )
+factor NUM
+NUM 0
 SEMI ;
 RBRACE }
 EOF EOF
