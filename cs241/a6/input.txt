@@ -21,13 +21,21 @@ dcls .EMPTY
 statements .EMPTY
 RETURN return
 expr term
-term term STAR factor
+term factor
+factor STAR factor
+STAR *
+factor LPAREN expr RPAREN
+LPAREN (
+expr expr PLUS term
+expr term
+term factor
+factor ID
+ID a
+PLUS +
 term factor
 factor ID
 ID b
-STAR *
-factor ID
-ID b
+RPAREN )
 SEMI ;
 RBRACE }
 EOF EOF

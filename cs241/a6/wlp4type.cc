@@ -166,8 +166,7 @@ string typeFactor(Node *node) {
       cerr << "ERROR: lvalue is not an int" << endl;
       exitt();
     }
-    type = type + "*";
-  } else if (node->children[0]->name == "factor LPAREN expr RPAREN") {
+  } else if (node->rule == "factor LPAREN expr RPAREN") {
     type = typeExpr(node->children[1]);
   } else if (node->rule == "factor ID LPAREN RPAREN") {
     type = typeFunctionCall(node->children[0]);
@@ -192,6 +191,7 @@ string typeFactor(Node *node) {
       cerr << "ERROR: expr is not an int" << endl;
       exitt();
     }
+    type = "int*";
   }
   node->type = type;
   return type;
