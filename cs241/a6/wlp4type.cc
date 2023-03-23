@@ -35,7 +35,7 @@ void deleteNode(Node *node) {
 
 void exitt() {
   deleteNode(root);
-  exit(1);
+  throw 1;
 }
 
 bool isTerminal(vector<string> s) {
@@ -441,6 +441,17 @@ string typeLvalue(Node *node) {
   return "unknown lvalue";
 }
 
+void typeTest(Node *node) {
+  string exp1 = typeExpr(node->children[0]);
+  string exp2 = typeExpr(node->children[2]);
+  if (exp1 != exp2) {
+    cerr << "ERROR: test expressions do not match: " << exp1 << ", " << exp2 << endl;
+    exitt();
+  }
+}
+
+
+
 void typeStatement(Node *node) {
   Node *state = node->children[0];
   if (state->name == "lvalue") {
@@ -450,17 +461,17 @@ void typeStatement(Node *node) {
       cerr << "ERROR: lvalue and rvalue do not match: " << type << ", " << rvalue << endl;
       exitt();
     }
-  } else {
-    if (state->name == "IF") {
-      typeStatements(state->children[5]);
-      typeStatements(state->children[9]);
-    } else if (state->name == "WHILE") {
-      typeStatements(state->children[5]);
-    } else if (state->name == "PRINTLN") {
-      typeExpr(state->children[2]);
-    } else if (state->name == "DELETE") {
-      typeExpr(state->children[3]);
-    }
+  } else if (state->rule == "statement IF LPAREN test RPAREN LBRACE statements RBRACE ELSE LBRACE statements RBRACE") {
+    typeTest(state->children[2]);
+    typeStatements(state->children[5]);
+    typeStatements(state->children[9]);
+  } else if (state->rule == "statement WHILE LPAREN test RPAREN LBRACE statements RBRACE") {
+    typeTest(state->children[2]);
+    typeStatements(state->children[5]);
+  } else if (state->name == "PRINTLN") {
+    typeExpr(state->children[2]);
+  } else if (state->name == "DELETE") {
+    typeExpr(state->children[3]);
   }
 }
 
@@ -481,9 +492,13 @@ void traverse(Node *node) {
 
 int main() {
   root = scan(NULL);
-  traverse(root);
-  printNode(root);
-  deleteNode(root);
+  try {
+    traverse(root);
+    printNode(root);
+    deleteNode(root);
+  } catch (int e) {
+    
+  }
 
   // // print function table
   // for (auto it = functionTable.begin(); it != functionTable.end(); it++) {
