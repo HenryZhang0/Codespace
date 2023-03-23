@@ -171,11 +171,14 @@ string typeFactor(Node *node) {
     type = typeExpr(node->children[1]);
   } else if (node->rule == "factor ID LPAREN RPAREN") {
     type = typeFunctionCall(node->children[0]);
+    if (functionTable[node->children[0]->lexeme].params.size() != 0) {
+      cerr << "ERROR: wrong number of args" << endl;
+      exitt();
+    }
   } else if (node->rule == "factor ID LPAREN arglist RPAREN") {
     Node *arglist = node->children[2];
     type = typeFunctionCall(node->children[0]);
     vector<string> arglistTypes = typeArglist(arglist);
-
     if (arglistTypes.size() != functionTable[node->children[0]->lexeme].params.size()) {
       cerr << "ERROR: wrong number of args" << endl;
       exitt();
