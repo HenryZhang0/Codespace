@@ -174,7 +174,6 @@ string typeFactor(Node *node) {
   } else if (node->rule == "factor ID LPAREN arglist RPAREN") {
     Node *arglist = node->children[2];
     type = typeFunctionCall(node->children[0]);
-    cout << "type: " << type << endl;
     vector<string> arglistTypes = typeArglist(arglist);
 
     if (arglistTypes.size() != functionTable[node->children[0]->lexeme].params.size()) {
@@ -343,6 +342,10 @@ void typeProcedure(Node *node) {
   functionTable[name].returnType = "int";
   Node *returnExpr = node->children[9];
   string returnType = typeExpr(returnExpr);
+  if (returnType != "int") {
+    cerr << "ERROR: procedure " << name << " return is not an int" << endl;
+    exitt();
+  }
 }
 
 void typeProcedures(Node *node) {
