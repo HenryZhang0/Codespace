@@ -19,46 +19,38 @@ RPAREN )
 LBRACE {
 dcls .EMPTY
 statements statements statement
-statements statements statement
-statements statements statement
-statements statements statement
 statements .EMPTY
-statement lvalue BECOMES expr SEMI
-lvalue ID
-ID a
-BECOMES =
-expr term
-term factor
-factor NULL
-NULL NULL
-SEMI ;
-statement lvalue BECOMES expr SEMI
-lvalue ID
-ID b
-BECOMES =
+statement IF LPAREN test RPAREN LBRACE statements RBRACE ELSE LBRACE statements RBRACE
+IF if
+LPAREN (
+test expr EQ expr
 expr term
 term factor
 factor NUM
-NUM 241
-SEMI ;
+NUM 0
+EQ ==
+expr term
+term factor
+factor NUM
+NUM 0
+RPAREN )
+LBRACE {
+statements statements statement
+statements .EMPTY
 statement PRINTLN LPAREN expr RPAREN SEMI
 PRINTLN println
 LPAREN (
 expr term
 term factor
 factor ID
-ID b
+ID a
 RPAREN )
 SEMI ;
-statement DELETE LBRACK RBRACK expr SEMI
-DELETE delete
-LBRACK [
-RBRACK ]
-expr term
-term factor
-factor ID
-ID a
-SEMI ;
+RBRACE }
+ELSE else
+LBRACE {
+statements .EMPTY
+RBRACE }
 RETURN return
 expr term
 term factor

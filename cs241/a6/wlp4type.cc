@@ -472,9 +472,17 @@ void typeStatement(Node *node) {
     typeTest(node->children[2]);
     typeStatements(node->children[5]);
   } else if (state->name == "PRINTLN") {
-    typeExpr(node->children[2]);
+    string type = typeExpr(node->children[2]);
+    if (type != "int") {
+      cerr << "ERROR: print type is not an int" << endl;
+      exitt();
+    }
   } else if (state->name == "DELETE") {
-    typeExpr(node->children[3]);
+    string type = typeExpr(node->children[3]);
+    if (type != "int*") {
+      cerr << "ERROR: delete type is not an int*" << endl;
+      exitt();
+    }
   }
 }
 
