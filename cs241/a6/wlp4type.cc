@@ -211,6 +211,12 @@ string typeTerm(Node *node) {
     factor = node->children[2];
     string type1 = typeTerm(term);
     string type2 = typeFactor(factor);
+    
+    string op = node->children[1]->lexeme;
+    if (type1 == "int*" || type2 == "int*") {
+      cerr << "ERROR: invalid type operation" << endl;
+      exitt();
+    }
     node->type = type1;
     return type1;
   }

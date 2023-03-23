@@ -18,44 +18,16 @@ ID b
 RPAREN )
 LBRACE {
 dcls .EMPTY
-statements statements statement
 statements .EMPTY
-statement IF LPAREN test RPAREN LBRACE statements RBRACE ELSE LBRACE statements RBRACE
-IF if
-LPAREN (
-test expr EQ expr
-expr term
-term factor
-factor NUM
-NUM 0
-EQ ==
-expr term
-term factor
-factor NUM
-NUM 0
-RPAREN )
-LBRACE {
-statements statements statement
-statements .EMPTY
-statement PRINTLN LPAREN expr RPAREN SEMI
-PRINTLN println
-LPAREN (
-expr term
-term factor
-factor ID
-ID a
-RPAREN )
-SEMI ;
-RBRACE }
-ELSE else
-LBRACE {
-statements .EMPTY
-RBRACE }
 RETURN return
 expr term
+term term STAR factor
 term factor
-factor NUM
-NUM 0
+factor ID
+ID b
+STAR *
+factor ID
+ID b
 SEMI ;
 RBRACE }
 EOF EOF
