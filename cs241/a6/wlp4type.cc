@@ -530,7 +530,7 @@ int main() {
     }
   }
     
-  }
+  
 
   // // print function table
   return 0;
