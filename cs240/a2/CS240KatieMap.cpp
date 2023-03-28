@@ -190,6 +190,16 @@ class CS240KatieMap {
       }
     }
 
+    void deleteTree(Node *node) {
+      if (node->is_leaf) {
+        delete node;
+        return;
+      }
+      deleteTree(node->left);
+      deleteTree(node->right);
+      delete node;
+    }
+
   public:
     CS240KatieMap(const vector<kvp>& kvps) {  // Constructor: Builds a new tree on the KVPs provided.
       tree = new Node();
@@ -254,8 +264,7 @@ class CS240KatieMap {
     }
 
     ~CS240KatieMap() { // Destructor: Frees all memory
-      delete tree->left;
-      delete tree->right;
+      deleteTree(tree);
     }
     
     void printTreee(Node *node, int depth = 0) {
