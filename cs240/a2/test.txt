@@ -1,0 +1,13 @@
+n 5
+this 1
+is 2
+a 3
+test 4
+yay 5
+p
+g test
+r a 0 yay 100
+r a 1 yay 5
+r b 1 z 5
+r a 1 x 5
+q

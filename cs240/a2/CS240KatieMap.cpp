@@ -126,8 +126,10 @@ class CS240KatieMap {
     }
     
     void preorder (Node* node, vector<kvp>& points) {
-      points.push_back(node->point);
-      if (node->is_leaf) return;
+      if (node->is_leaf) {
+        points.push_back(node->point);
+        return;
+      }
 
       preorder(node->left, points);
       preorder(node->right, points);
