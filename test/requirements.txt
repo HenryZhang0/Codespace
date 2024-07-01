@@ -1,0 +1,4 @@
+audioread==3.0.1
+vamp==1.1.0
+chord-extractor==0.1.2
+Flask==2.2.5

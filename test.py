@@ -21,7 +21,7 @@ def split(filename):
     runCommand(command)
 
 def chords():
-    autochord.recognize('other.wav', lab_fn='chords.lab')
+    autochord.recognize('lauv.mp3', lab_fn='lauv_chords.lab')
     
 def lyrics(songTitle):
     #syncedlyrics "rap god"
@@ -29,5 +29,5 @@ def lyrics(songTitle):
     runCommand(command)
 
 # lyrics("rap god")
-# chords()
-split('audio_example.mp3')
+chords()
+# split('audio_example.mp3')
